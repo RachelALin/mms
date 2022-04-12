@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.purchase.mapper.MmsNeedMapper">
+    
+    <resultMap type="MmsNeed" id="MmsNeedResult">
+        <result property="needId"    column="need_id"    />
+        <result property="needName"    column="need_name"    />
+        <result property="planId"    column="plan_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <association property="user"    column="user_id" javaType="SysUser" resultMap="userResult" />
+        <association property="project"    column="pro_id" javaType="MmsProject" resultMap="MmsProjectResult" />
+        <association property="plan"    column="plan_id" javaType="MmsPlan" resultMap="MmsPlanResult" />
+    </resultMap>
+
+    <resultMap type="MmsPlan" id="MmsPlanResult">
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+        <result property="proId"    column="pro_id"    />
+    </resultMap>
+
+    <resultMap type="MmsProject" id="MmsProjectResult">
+        <result property="proId"    column="pro_id"    />
+        <result property="proName"    column="pro_name"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"       column="user_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+    </resultMap>
+
+    <resultMap id="MmsNeedMmsNeedMaterialResult" type="MmsNeed" extends="MmsNeedResult">
+        <collection property="mmsNeedMaterialList" notNullColumn="sub_id" javaType="java.util.List" resultMap="MmsNeedMaterialResult" />
+    </resultMap>
+
+    <resultMap type="MmsNeedMaterial" id="MmsNeedMaterialResult">
+        <result property="id"    column="sub_id"    />
+        <result property="matId"    column="sub_mat_id"    />
+        <result property="needId"    column="sub_need_id"    />
+        <result property="matUprice"    column="sub_mat_uprice"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="remark"    column="sub_remark"    />
+    </resultMap>
+
+    <sql id="selectMmsNeedVo">
+        select a.need_id, a.need_name, a.plan_id, a.pro_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+        u.user_name, u.nick_name, u.email, u.phonenumber, u.sex, t.pro_id, t.pro_name, p.plan_id, p.plan_name, p.pro_id
+        from mms_need a
+        left join sys_user u on u.user_id = a.user_id
+        left join mms_project t on t.pro_id = a.pro_id
+        left join mms_plan p on p.plan_id = a.plan_id
+    </sql>
+
+    <select id="selectMmsNeedList" parameterType="MmsNeed" resultMap="MmsNeedResult">
+        <include refid="selectMmsNeedVo"/>
+        <where>  
+            <if test="needName != null  and needName != ''"> and a.need_name like concat('%', #{needName}, '%')</if>
+            <if test="planId != null "> and a.plan_id = #{planId}</if>
+            <if test="proId != null "> and a.pro_id = #{proId}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+            <if test="userId != null "> and a.user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsNeedByNeedId" parameterType="Long" resultMap="MmsNeedMmsNeedMaterialResult">
+        select a.need_id, a.need_name, a.plan_id, a.pro_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+ b.id as sub_id, b.mat_id as sub_mat_id, b.need_id as sub_need_id, b.mat_uprice as sub_mat_uprice, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.remark as sub_remark
+        from mms_need a
+        left join mms_need_material b on b.need_id = a.need_id
+        where a.need_id = #{needId}
+    </select>
+        
+    <insert id="insertMmsNeed" parameterType="MmsNeed" useGeneratedKeys="true" keyProperty="needId">
+        insert into mms_need
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="needName != null and needName != ''">need_name,</if>
+            <if test="planId != null">plan_id,</if>
+            <if test="proId != null">pro_id,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="needName != null and needName != ''">#{needName},</if>
+            <if test="planId != null">#{planId},</if>
+            <if test="proId != null">#{proId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsNeed" parameterType="MmsNeed">
+        update mms_need
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="needName != null and needName != ''">need_name = #{needName},</if>
+            <if test="planId != null">plan_id = #{planId},</if>
+            <if test="proId != null">pro_id = #{proId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where need_id = #{needId}
+    </update>
+
+    <delete id="deleteMmsNeedByNeedId" parameterType="Long">
+        delete from mms_need where need_id = #{needId}
+    </delete>
+
+    <delete id="deleteMmsNeedByNeedIds" parameterType="String">
+        delete from mms_need where need_id in 
+        <foreach item="needId" collection="array" open="(" separator="," close=")">
+            #{needId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteMmsNeedMaterialByNeedIds" parameterType="String">
+        delete from mms_need_material where need_id in 
+        <foreach item="needId" collection="array" open="(" separator="," close=")">
+            #{needId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMmsNeedMaterialByNeedId" parameterType="Long">
+        delete from mms_need_material where need_id = #{needId}
+    </delete>
+
+    <insert id="batchMmsNeedMaterial">
+        insert into mms_need_material( id, mat_id, need_id, mat_uprice, create_by, create_time, update_by, update_time, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.matId}, #{item.needId}, #{item.matUprice}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+</mapper>

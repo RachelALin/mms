@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.inventory.mapper.MmsBackMapper">
+    
+    <resultMap type="MmsBack" id="MmsBackResult">
+        <result property="backId"    column="back_id"    />
+        <result property="backName"    column="back_name"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeId"    column="store_id"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="MmsBackMmsBackMaterialResult" type="MmsBack" extends="MmsBackResult">
+        <collection property="mmsBackMaterialList" notNullColumn="sub_id" javaType="java.util.List" resultMap="MmsBackMaterialResult" />
+    </resultMap>
+
+    <resultMap type="MmsBackMaterial" id="MmsBackMaterialResult">
+        <result property="id"    column="sub_id"    />
+        <result property="matId"    column="sub_mat_id"    />
+        <result property="backId"    column="sub_back_id"    />
+        <result property="backNum"    column="sub_back_num"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="remark"    column="sub_remark"    />
+    </resultMap>
+
+    <sql id="selectMmsBackVo">
+        select back_id, back_name, pro_id, store_id, status, user_id, create_by, create_time, update_by, update_time, remark from mms_back
+    </sql>
+
+    <select id="selectMmsBackList" parameterType="MmsBack" resultMap="MmsBackResult">
+        <include refid="selectMmsBackVo"/>
+        <where>  
+            <if test="backName != null  and backName != ''"> and back_name like concat('%', #{backName}, '%')</if>
+            <if test="proId != null "> and pro_id = #{proId}</if>
+            <if test="storeId != null "> and store_id = #{storeId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsBackByBackId" parameterType="Long" resultMap="MmsBackMmsBackMaterialResult">
+        select a.back_id, a.back_name, a.pro_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+ b.id as sub_id, b.mat_id as sub_mat_id, b.back_id as sub_back_id, b.back_num as sub_back_num, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.remark as sub_remark
+        from mms_back a
+        left join mms_back_material b on b.back_id = a.back_id
+        where a.back_id = #{backId}
+    </select>
+        
+    <insert id="insertMmsBack" parameterType="MmsBack" useGeneratedKeys="true" keyProperty="backId">
+        insert into mms_back
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="backName != null and backName != ''">back_name,</if>
+            <if test="proId != null">pro_id,</if>
+            <if test="storeId != null">store_id,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="backName != null and backName != ''">#{backName},</if>
+            <if test="proId != null">#{proId},</if>
+            <if test="storeId != null">#{storeId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsBack" parameterType="MmsBack">
+        update mms_back
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="backName != null and backName != ''">back_name = #{backName},</if>
+            <if test="proId != null">pro_id = #{proId},</if>
+            <if test="storeId != null">store_id = #{storeId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where back_id = #{backId}
+    </update>
+
+    <delete id="deleteMmsBackByBackId" parameterType="Long">
+        delete from mms_back where back_id = #{backId}
+    </delete>
+
+    <delete id="deleteMmsBackByBackIds" parameterType="String">
+        delete from mms_back where back_id in 
+        <foreach item="backId" collection="array" open="(" separator="," close=")">
+            #{backId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteMmsBackMaterialByBackIds" parameterType="String">
+        delete from mms_back_material where back_id in 
+        <foreach item="backId" collection="array" open="(" separator="," close=")">
+            #{backId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMmsBackMaterialByBackId" parameterType="Long">
+        delete from mms_back_material where back_id = #{backId}
+    </delete>
+
+    <insert id="batchMmsBackMaterial">
+        insert into mms_back_material( id, mat_id, back_id, back_num, create_by, create_time, update_by, update_time, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.matId}, #{item.backId}, #{item.backNum}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.storage.mapper.MmsStoreMapper">
+    
+    <resultMap type="MmsStore" id="MmsStoreResult">
+        <result property="storeId"    column="store_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="userId"    column="user_id"    />
+        <result property="storePhone"    column="store_phone"    />
+        <result property="storeAddress"    column="store_address"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="user"    column="user_id" javaType="SysUser" resultMap="userResult" />
+        <association property="project"    column="pro_id" javaType="MmsProject" resultMap="MmsProjectResult" />
+    </resultMap>
+
+    <resultMap type="MmsProject" id="MmsProjectResult">
+        <result property="proId"    column="pro_id"    />
+        <result property="proName"    column="pro_name"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"       column="user_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+    </resultMap>
+
+
+    <resultMap id="MmsStoreMmsStoreMaterialResult" type="MmsStore" extends="MmsStoreResult">
+        <collection property="mmsStoreMaterialList" notNullColumn="sub_id" javaType="java.util.List" resultMap="MmsStoreMaterialResult" />
+    </resultMap>
+
+    <resultMap type="MmsStoreMaterial" id="MmsStoreMaterialResult">
+        <result property="id"    column="sub_id"    />
+        <result property="matId"    column="sub_mat_id"    />
+        <result property="storeId"    column="sub_store_id"    />
+        <result property="matUprice"    column="sub_mat_uprice"    />
+        <result property="matNum"    column="sub_mat_num"    />
+        <result property="matTprice"    column="sub_mat_tprice"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="remark"    column="sub_remark"    />
+    </resultMap>
+
+    <sql id="selectMmsStoreVo">
+        select a.store_id, a.pro_id, a.store_name, a.user_id, a.store_phone, a.store_address, a.status, a.create_by, a.create_time, a.update_by,
+        a.update_time, u.user_name, u.nick_name, u.email, u.phonenumber, u.sex, t.pro_id, t.pro_name
+        from mms_store a
+        left join sys_user u on u.user_id = a.user_id
+        left join mms_project t on t.pro_id = a.pro_id
+    </sql>
+
+
+    <select id="selectMmsStoreList" parameterType="MmsStore" resultMap="MmsStoreResult">
+        <include refid="selectMmsStoreVo"/>
+        <where>  
+            <if test="proId != null "> and a.pro_id = #{proId}</if>
+            <if test="storeName != null  and storeName != ''"> and a.store_name like concat('%', #{storeName}, '%')</if>
+            <if test="userId != null "> and a.user_id = #{userId}</if>
+            <if test="storePhone != null  and storePhone != ''"> and a.store_phone = #{storePhone}</if>
+            <if test="storeAddress != null  and storeAddress != ''"> and a.store_address = #{storeAddress}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectMmsStoreByProId" parameterType="Long" resultMap="MmsStoreResult">
+          select store_id, store_name, pro_id from mms_store where pro_id = #{proId}
+    </select>
+    <select id="selectMmsStoreByStoreId" parameterType="Long" resultMap="MmsStoreMmsStoreMaterialResult">
+        select a.store_id, a.pro_id, a.store_name, a.user_id, a.store_phone, a.store_address, a.status, a.create_by, a.create_time, a.update_by, a.update_time,
+ b.id as sub_id, b.mat_id as sub_mat_id, b.store_id as sub_store_id, b.mat_uprice as sub_mat_uprice, b.mat_num as sub_mat_num, b.mat_tprice as sub_mat_tprice, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.remark as sub_remark
+        from mms_store a
+        left join mms_store_material b on b.store_id = a.store_id
+        where a.store_id = #{storeId}
+    </select>
+        
+    <insert id="insertMmsStore" parameterType="MmsStore" useGeneratedKeys="true" keyProperty="storeId">
+        insert into mms_store
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="proId != null">pro_id,</if>
+            <if test="storeName != null and storeName != ''">store_name,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="storePhone != null">store_phone,</if>
+            <if test="storeAddress != null">store_address,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="proId != null">#{proId},</if>
+            <if test="storeName != null and storeName != ''">#{storeName},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="storePhone != null">#{storePhone},</if>
+            <if test="storeAddress != null">#{storeAddress},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsStore" parameterType="MmsStore">
+        update mms_store
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="proId != null">pro_id = #{proId},</if>
+            <if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="storePhone != null">store_phone = #{storePhone},</if>
+            <if test="storeAddress != null">store_address = #{storeAddress},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where store_id = #{storeId}
+    </update>
+
+    <delete id="deleteMmsStoreByStoreId" parameterType="Long">
+        delete from mms_store where store_id = #{storeId}
+    </delete>
+
+    <delete id="deleteMmsStoreByStoreIds" parameterType="String">
+        delete from mms_store where store_id in 
+        <foreach item="storeId" collection="array" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteMmsStoreMaterialByStoreIds" parameterType="String">
+        delete from mms_store_material where store_id in 
+        <foreach item="storeId" collection="array" open="(" separator="," close=")">
+            #{storeId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMmsStoreMaterialByStoreId" parameterType="Long">
+        delete from mms_store_material where store_id = #{storeId}
+    </delete>
+
+    <insert id="batchMmsStoreMaterial">
+        insert into mms_store_material( id, mat_id, store_id, mat_uprice, mat_num, mat_tprice, create_by, create_time, update_by, update_time, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.matId}, #{item.storeId}, #{item.matUprice}, #{item.matNum}, #{item.matTprice}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+
+
+    <update id="updateMmsStoreReceived" parameterType="MmsStore">
+        update mms_store
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="proId != null">pro_id = #{proId},</if>
+            <if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="storePhone != null">store_phone = #{storePhone},</if>
+            <if test="storeAddress != null">store_address = #{storeAddress},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where store_id = #{storeId}
+    </update>
+
+    <insert id="batchMmsStoreMaterialReceived">
+        insert into mms_store_material( id, mat_id, store_id, mat_uprice, mat_num, mat_tprice, create_by, create_time, update_by, update_time, remark) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.matId}, #{item.storeId}, #{item.conUprice}, #{item.inNum}, #{item.conTprice}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+
+</mapper>

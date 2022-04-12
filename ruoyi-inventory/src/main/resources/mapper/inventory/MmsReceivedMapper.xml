@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.inventory.mapper.MmsReceivedMapper">
+    
+    <resultMap type="MmsReceived" id="MmsReceivedResult">
+        <result property="inId"    column="in_id"    />
+        <result property="inName"    column="in_name"    />
+        <result property="conId"    column="con_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="storeId"    column="store_id"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <association property="store"    column="store_id" javaType="MmsStore" resultMap="MmsStoreResult" />
+        <association property="user"    column="user_id" javaType="SysUser" resultMap="userResult" />
+        <association property="project"    column="pro_id" javaType="MmsProject" resultMap="MmsProjectResult" />
+        <association property="contract"    column="con_id" javaType="MmsContract" resultMap="MmsContractResult" />
+        <association property="supplier"    column="supplier_id" javaType="MmsSupplier" resultMap="MmsSupplierResult" />
+    </resultMap>
+
+    <resultMap type="MmsStore" id="MmsStoreResult">
+        <result property="storeId"    column="store_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeName"    column="store_name"    />
+    </resultMap>
+
+    <resultMap type="MmsSupplier" id="MmsSupplierResult">
+        <result property="supplierId"    column="supplier_id"    />
+        <result property="supplierName"    column="supplier_name"    />
+    </resultMap>
+
+    <resultMap type="MmsContract" id="MmsContractResult">
+        <result property="conId"    column="con_id"    />
+        <result property="conName"    column="con_name"    />
+        <result property="proId" column="pro_id" />
+    </resultMap>
+
+    <resultMap type="MmsProject" id="MmsProjectResult">
+        <result property="proId"    column="pro_id"    />
+        <result property="proName"    column="pro_name"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"       column="user_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+    </resultMap>
+
+    <resultMap id="MmsReceivedMmsReceivedMaterialResult" type="MmsReceived" extends="MmsReceivedResult">
+        <collection property="mmsReceivedMaterialList" notNullColumn="sub_id" javaType="java.util.List" resultMap="MmsReceivedMaterialResult" />
+    </resultMap>
+
+    <resultMap type="MmsReceivedMaterial" id="MmsReceivedMaterialResult">
+        <result property="id"    column="sub_id"    />
+        <result property="matId"    column="sub_mat_id"    />
+        <result property="inId"    column="sub_in_id"    />
+        <result property="conUprice"    column="sub_con_uprice"    />
+        <result property="inNum"    column="sub_in_num"    />
+        <result property="conTax"    column="sub_con_tax"    />
+        <result property="conTprice"    column="sub_con_tprice"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="remark"    column="sub_remark"    />
+    </resultMap>
+
+    <sql id="selectMmsReceivedVo">
+        select a.in_id, a.in_name, a.con_id, a.pro_id, a.supplier_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time,
+        a.update_by, a.update_time, a.remark,
+        u.user_name, u.nick_name, u.email, u.phonenumber, u.sex, t.pro_id, t.pro_name, p.con_id, p.con_name,p.pro_id,
+        s.supplier_id, s.supplier_name,
+        e.store_id, e.store_name, e.pro_id
+        from mms_received a
+        left join sys_user u on u.user_id = a.user_id
+        left join mms_project t on t.pro_id = a.pro_id
+        left join mms_contract p on p.con_id = a.con_id
+        left join mms_supplier s on s.supplier_id = a.supplier_id
+        left join mms_store e on e.store_id = a.store_id
+
+    </sql>
+
+    <select id="selectMmsReceivedList" parameterType="MmsReceived" resultMap="MmsReceivedResult">
+        <include refid="selectMmsReceivedVo"/>
+        <where>  
+            <if test="inName != null  and inName != ''"> and a.in_name like concat('%', #{inName}, '%')</if>
+            <if test="conId != null "> and a.con_id = #{conId}</if>
+            <if test="proId != null "> and a.pro_id = #{proId}</if>
+            <if test="supplierId != null "> and a.supplier_id = #{supplierId}</if>
+            <if test="storeId != null "> and a.store_id = #{storeId}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+            <if test="userId != null "> and a.user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsReceivedByInId" parameterType="Long" resultMap="MmsReceivedMmsReceivedMaterialResult">
+        select a.in_id, a.in_name, a.con_id, a.pro_id, a.supplier_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+ b.id as sub_id, b.mat_id as sub_mat_id, b.in_id as sub_in_id, b.con_uprice as sub_con_uprice, b.in_num as sub_in_num, b.con_tax as sub_con_tax, b.con_tprice as sub_con_tprice, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.remark as sub_remark
+        from mms_received a
+        left join mms_received_material b on b.in_id = a.in_id
+        where a.in_id = #{inId}
+    </select>
+        
+    <insert id="insertMmsReceived" parameterType="MmsReceived" useGeneratedKeys="true" keyProperty="inId">
+        insert into mms_received
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inName != null and inName != ''">in_name,</if>
+            <if test="conId != null">con_id,</if>
+            <if test="proId != null">pro_id,</if>
+            <if test="supplierId != null">supplier_id,</if>
+            <if test="storeId != null">store_id,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inName != null and inName != ''">#{inName},</if>
+            <if test="conId != null">#{conId},</if>
+            <if test="proId != null">#{proId},</if>
+            <if test="supplierId != null">#{supplierId},</if>
+            <if test="storeId != null">#{storeId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsReceived" parameterType="MmsReceived">
+        update mms_received
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inName != null and inName != ''">in_name = #{inName},</if>
+            <if test="conId != null">con_id = #{conId},</if>
+            <if test="proId != null">pro_id = #{proId},</if>
+            <if test="supplierId != null">supplier_id = #{supplierId},</if>
+            <if test="storeId != null">store_id = #{storeId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where in_id = #{inId}
+    </update>
+
+    <delete id="deleteMmsReceivedByInId" parameterType="Long">
+        delete from mms_received where in_id = #{inId}
+    </delete>
+
+    <delete id="deleteMmsReceivedByInIds" parameterType="String">
+        delete from mms_received where in_id in 
+        <foreach item="inId" collection="array" open="(" separator="," close=")">
+            #{inId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteMmsReceivedMaterialByInIds" parameterType="String">
+        delete from mms_received_material where in_id in 
+        <foreach item="inId" collection="array" open="(" separator="," close=")">
+            #{inId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMmsReceivedMaterialByInId" parameterType="Long">
+        delete from mms_received_material where in_id = #{inId}
+    </delete>
+
+    <insert id="batchMmsReceivedMaterial">
+        insert into mms_received_material( id, mat_id, in_id, con_uprice, in_num, con_tax, con_tprice, create_by, create_time, update_by, update_time, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.matId}, #{item.inId}, #{item.conUprice}, #{item.inNum}, #{item.conTax}, #{item.conTprice}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+</mapper>

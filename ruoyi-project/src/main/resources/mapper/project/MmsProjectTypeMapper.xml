@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mapper.MmsProjectTypeMapper">
+    
+    <resultMap type="MmsProjectType" id="MmsProjectTypeResult">
+        <result property="id"    column="id"    />
+        <result property="typeName"    column="type_name"    />
+    </resultMap>
+
+    <sql id="selectMmsProjectTypeVo">
+        select id, type_name from mms_project_type
+    </sql>
+
+    <select id="selectMmsProjectTypeList" parameterType="MmsProjectType" resultMap="MmsProjectTypeResult">
+        <include refid="selectMmsProjectTypeVo"/>
+        <where>  
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsProjectTypeById" parameterType="Long" resultMap="MmsProjectTypeResult">
+        <include refid="selectMmsProjectTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMmsProjectType" parameterType="MmsProjectType" useGeneratedKeys="true" keyProperty="id">
+        insert into mms_project_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">type_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">#{typeName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsProjectType" parameterType="MmsProjectType">
+        update mms_project_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeName != null and typeName != ''">type_name = #{typeName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMmsProjectTypeById" parameterType="Long">
+        delete from mms_project_type where id = #{id}
+    </delete>
+
+    <delete id="deleteMmsProjectTypeByIds" parameterType="String">
+        delete from mms_project_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

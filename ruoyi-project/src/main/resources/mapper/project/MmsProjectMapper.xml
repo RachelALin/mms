@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.mapper.MmsProjectMapper">
+    
+    <resultMap type="MmsProject" id="MmsProjectResult">
+        <result property="proId"    column="pro_id"    />
+        <result property="proName"    column="pro_name"    />
+        <result property="ptypeId"    column="ptype_id"    />
+        <result property="proArea"    column="pro_area"    />
+        <result property="proUnit"    column="pro_unit"    />
+        <result property="supervisionUnit"    column="supervision_unit"    />
+        <result property="proAddress"    column="pro_address"    />
+        <result property="proPhone"    column="pro_phone"    />
+        <result property="userId"    column="user_id"    />
+        <result property="status"    column="status"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="endDate"    column="end_date"    />
+        <result property="proNote"    column="pro_note"    />
+        <result property="taxWay"    column="tax_way"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="user"    column="user_id" javaType="SysUser" resultMap="userResult" />
+        <association property="projectType"    column="ptype_id" javaType="MmsProjectType" resultMap="projectTypeResult" />
+<!--        <association property="store"    column="store_id" javaType="MmsStore" resultMap="MmsStoreResult" />-->
+    </resultMap>
+
+<!--    <resultMap type="MmsStore" id="MmsStoreResult">-->
+<!--        <result property="storeId"    column="store_id"    />-->
+<!--        <result property="proId"    column="pro_id"    />-->
+<!--        <result property="storeName"    column="store_name"    />-->
+<!--    </resultMap>-->
+
+    <resultMap id="projectTypeResult" type="MmsProjectType">
+        <result property="id"    column="id"    />
+        <result property="typeName"    column="type_name"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"       column="user_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+    </resultMap>
+
+
+    <sql id="selectMmsProjectVo">
+        select p.pro_id, p.pro_name, p.ptype_id, p.pro_area, p.pro_unit, p.supervision_unit, p.pro_address, p.pro_phone, p.user_id, p.status, p.start_date, p.end_date, p.pro_note, p.tax_way,
+        p.create_by, p.create_time, p.update_by, p.update_time, u.user_name, u.nick_name, u.email, u.phonenumber, u.sex, t.id, t.type_name
+        from mms_project p
+        left join sys_user u on u.user_id = p.user_id
+        left join mms_project_type t on t.id = p.ptype_id
+
+    </sql>
+
+    <select id="selectMmsProjectList" parameterType="MmsProject" resultMap="MmsProjectResult">
+        <include refid="selectMmsProjectVo"/>
+        <where>  
+            <if test="proName != null  and proName != ''"> and pro_name like concat('%', #{proName}, '%')</if>
+            <if test="ptypeId != null "> and ptype_id = #{ptypeId}</if>
+            <if test="proArea != null "> and pro_area = #{proArea}</if>
+            <if test="proUnit != null  and proUnit != ''"> and pro_unit = #{proUnit}</if>
+            <if test="supervisionUnit != null  and supervisionUnit != ''"> and supervision_unit = #{supervisionUnit}</if>
+            <if test="proAddress != null  and proAddress != ''"> and pro_address = #{proAddress}</if>
+            <if test="proPhone != null  and proPhone != ''"> and pro_phone = #{proPhone}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="startDate != null "> and start_date = #{startDate}</if>
+            <if test="endDate != null "> and end_date = #{endDate}</if>
+            <if test="proNote != null  and proNote != ''"> and pro_note = #{proNote}</if>
+            <if test="taxWay != null  and taxWay != ''"> and tax_way = #{taxWay}</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsProjectByProId" parameterType="Long" resultMap="MmsProjectResult">
+        <include refid="selectMmsProjectVo"/>
+        where pro_id = #{proId}
+    </select>
+        
+    <insert id="insertMmsProject" parameterType="MmsProject" useGeneratedKeys="true" keyProperty="proId">
+        insert into mms_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="proName != null and proName != ''">pro_name,</if>
+            <if test="ptypeId != null">ptype_id,</if>
+            <if test="proArea != null">pro_area,</if>
+            <if test="proUnit != null">pro_unit,</if>
+            <if test="supervisionUnit != null">supervision_unit,</if>
+            <if test="proAddress != null and proAddress != ''">pro_address,</if>
+            <if test="proPhone != null">pro_phone,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="status != null">status,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="proNote != null">pro_note,</if>
+            <if test="taxWay != null">tax_way,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="proName != null and proName != ''">#{proName},</if>
+            <if test="ptypeId != null">#{ptypeId},</if>
+            <if test="proArea != null">#{proArea},</if>
+            <if test="proUnit != null">#{proUnit},</if>
+            <if test="supervisionUnit != null">#{supervisionUnit},</if>
+            <if test="proAddress != null and proAddress != ''">#{proAddress},</if>
+            <if test="proPhone != null">#{proPhone},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="proNote != null">#{proNote},</if>
+            <if test="taxWay != null">#{taxWay},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsProject" parameterType="MmsProject">
+        update mms_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="proName != null and proName != ''">pro_name = #{proName},</if>
+            <if test="ptypeId != null">ptype_id = #{ptypeId},</if>
+            <if test="proArea != null">pro_area = #{proArea},</if>
+            <if test="proUnit != null">pro_unit = #{proUnit},</if>
+            <if test="supervisionUnit != null">supervision_unit = #{supervisionUnit},</if>
+            <if test="proAddress != null and proAddress != ''">pro_address = #{proAddress},</if>
+            <if test="proPhone != null">pro_phone = #{proPhone},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="proNote != null">pro_note = #{proNote},</if>
+            <if test="taxWay != null">tax_way = #{taxWay},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where pro_id = #{proId}
+    </update>
+
+    <delete id="deleteMmsProjectByProId" parameterType="Long">
+        delete from mms_project where pro_id = #{proId}
+    </delete>
+
+    <delete id="deleteMmsProjectByProIds" parameterType="String">
+        delete from mms_project where pro_id in 
+        <foreach item="proId" collection="array" open="(" separator="," close=")">
+            #{proId}
+        </foreach>
+    </delete>
+</mapper>

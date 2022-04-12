@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.inventory.mapper.MmsCheckMapper">
+    
+    <resultMap type="MmsCheck" id="MmsCheckResult">
+        <result property="cheId"    column="che_id"    />
+        <result property="cheName"    column="che_name"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeId"    column="store_id"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="MmsCheckMmsCheckMaterialResult" type="MmsCheck" extends="MmsCheckResult">
+        <collection property="mmsCheckMaterialList" notNullColumn="sub_id" javaType="java.util.List" resultMap="MmsCheckMaterialResult" />
+    </resultMap>
+
+    <resultMap type="MmsCheckMaterial" id="MmsCheckMaterialResult">
+        <result property="id"    column="sub_id"    />
+        <result property="matId"    column="sub_mat_id"    />
+        <result property="cheId"    column="sub_che_id"    />
+        <result property="num"    column="sub_num"    />
+        <result property="cheNum"    column="sub_che_num"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="remark"    column="sub_remark"    />
+    </resultMap>
+
+    <sql id="selectMmsCheckVo">
+        select che_id, che_name, pro_id, store_id, status, user_id, create_by, create_time, update_by, update_time, remark from mms_check
+    </sql>
+
+    <select id="selectMmsCheckList" parameterType="MmsCheck" resultMap="MmsCheckResult">
+        <include refid="selectMmsCheckVo"/>
+        <where>  
+            <if test="cheName != null  and cheName != ''"> and che_name like concat('%', #{cheName}, '%')</if>
+            <if test="proId != null "> and pro_id = #{proId}</if>
+            <if test="storeId != null "> and store_id = #{storeId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsCheckByCheId" parameterType="Long" resultMap="MmsCheckMmsCheckMaterialResult">
+        select a.che_id, a.che_name, a.pro_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+ b.id as sub_id, b.mat_id as sub_mat_id, b.che_id as sub_che_id, b.num as sub_num, b.che_num as sub_che_num, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.remark as sub_remark
+        from mms_check a
+        left join mms_check_material b on b.che_id = a.che_id
+        where a.che_id = #{cheId}
+    </select>
+        
+    <insert id="insertMmsCheck" parameterType="MmsCheck" useGeneratedKeys="true" keyProperty="cheId">
+        insert into mms_check
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cheName != null and cheName != ''">che_name,</if>
+            <if test="proId != null">pro_id,</if>
+            <if test="storeId != null">store_id,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cheName != null and cheName != ''">#{cheName},</if>
+            <if test="proId != null">#{proId},</if>
+            <if test="storeId != null">#{storeId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsCheck" parameterType="MmsCheck">
+        update mms_check
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cheName != null and cheName != ''">che_name = #{cheName},</if>
+            <if test="proId != null">pro_id = #{proId},</if>
+            <if test="storeId != null">store_id = #{storeId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where che_id = #{cheId}
+    </update>
+
+    <delete id="deleteMmsCheckByCheId" parameterType="Long">
+        delete from mms_check where che_id = #{cheId}
+    </delete>
+
+    <delete id="deleteMmsCheckByCheIds" parameterType="String">
+        delete from mms_check where che_id in 
+        <foreach item="cheId" collection="array" open="(" separator="," close=")">
+            #{cheId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteMmsCheckMaterialByCheIds" parameterType="String">
+        delete from mms_check_material where che_id in 
+        <foreach item="cheId" collection="array" open="(" separator="," close=")">
+            #{cheId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMmsCheckMaterialByCheId" parameterType="Long">
+        delete from mms_check_material where che_id = #{cheId}
+    </delete>
+
+    <insert id="batchMmsCheckMaterial">
+        insert into mms_check_material( id, mat_id, che_id, num, che_num, create_by, create_time, update_by, update_time, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.matId}, #{item.cheId}, #{item.num}, #{item.cheNum}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
+        </foreach>
+    </insert>
+</mapper>

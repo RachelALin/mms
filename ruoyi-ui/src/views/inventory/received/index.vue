@@ -1,0 +1,648 @@
+<template>
+  <div class="app-container">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
+      <el-form-item label="材料入库名称" prop="inName">
+        <el-input
+          v-model="queryParams.inName"
+          placeholder="请输入材料入库名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+
+      <el-form-item label="材料合同" prop="conId">
+        <el-select v-model="queryParams.conId" placeholder="请选择材料合同" clearable size="small">
+          <el-option
+            v-for="dict in contractList"
+            :key="dict.id"
+            :label="dict.conName"
+            :value="dict.conId"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="项目名称" prop="conId">
+        <el-select v-model="queryParams.conId" placeholder="请选择项目" clearable size="small">
+          <el-option
+            v-for="dict in projectList"
+            :key="dict.id"
+            :label="dict.proName"
+            :value="dict.proId"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="供应商名称" prop="supplierId">
+        <el-select v-model="queryParams.supplierId" placeholder="请选择供应商" clearable size="small">
+          <el-option
+            v-for="dict in supplierList"
+            :key="dict.id"
+            :label="dict.supplierName"
+            :value="dict.supplierId"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="仓库名称" prop="storeId">
+        <el-select v-model="queryParams.storeId" placeholder="请选择仓库" clearable size="small">
+          <el-option
+            v-for="dict in storeList"
+            :key="dict.id"
+            :label="dict.storeName"
+            :value="dict.storeId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="材料入库状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择材料入库状态" clearable size="small">
+          <el-option
+            v-for="dict in dict.type.mms_pur_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <!-- <el-form-item label="审核人ID" prop="userId">
+        <el-input
+          v-model="queryParams.userId"
+          placeholder="请输入审核人ID"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>-->
+
+      <el-form-item label="审核人" prop="userId">
+        <el-select v-model="queryParams.userId" placeholder="请选择审核人" clearable size="small">
+          <el-option
+            v-for="dict in userList"
+            :key="dict.id"
+            :label="dict.nickName"
+            :value="dict.userId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['inventory:received:add']"
+        >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['inventory:received:edit']"
+        >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['inventory:received:remove']"
+        >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['inventory:received:export']"
+        >导出</el-button>
+      </el-col>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+
+    <el-table v-loading="loading" :data="receivedList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column label="序号" align="center" prop="total" /> -->
+      <!-- <el-table-column label="材料入库序号" align="center" prop="inId" /> -->
+      <el-table-column label="材料入库名称" align="center" prop="inName" />
+      <el-table-column label="材料合同名称" align="center" prop="contract.conName" />
+      <el-table-column label="项目名称" align="center" prop="project.proName" />
+      <el-table-column label="供应商名称" align="center" prop="supplier.supplierName" />
+      <el-table-column label="仓库" align="center" prop="store.storeName" />
+      <el-table-column label="审核人" align="center" prop="user.nickName" />
+      <el-table-column label="材料入库状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.mms_pur_status" :value="scope.row.status" />
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="审核人" align="center" prop="user.nickName" /> -->
+      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['inventory:received:edit']"
+          >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['inventory:received:remove']"
+          >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
+
+    <!-- 添加或修改材料入库对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="材料入库名称" prop="inName">
+          <el-input v-model="form.inName" placeholder="请输入材料入库名称" />
+        </el-form-item>
+        <!-- <el-form-item label="材料合同" prop="conId">
+          <el-input v-model="form.conId" placeholder="请输入材料合同ID" />
+        </el-form-item>-->
+
+        <el-form-item label="材料合同" prop="conId">
+          <el-select
+            v-model="form.conId"
+            placeholder="请选择需用计划名称"
+            @change="handleShowPro(form.conId)"
+          >
+            <el-option
+              v-for="dict in contractList"
+              :key="dict.id"
+              :label="dict.conName"
+              :value="dict.conId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="供应商名称" prop="supplierId">
+          <el-select v-model="form.supplierId" placeholder="请选择合适供应商">
+            <el-option
+              v-for="dict in supplierList"
+              :key="dict.id"
+              :label="dict.supplierName"
+              :value="dict.supplierId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="项目ID" prop="proId">
+          <el-input v-model="form.proId" placeholder="请输入项目ID" />
+        </el-form-item>-->
+        <!-- <el-form-item label="仓库ID" prop="storeId">
+          <el-input v-model="form.storeId" placeholder="请输入仓库ID" />
+        </el-form-item>-->
+        <el-form-item label="仓库名称" prop="storeId">
+          <el-select v-model="form.storeId" placeholder="请选择合适仓库">
+            <el-option
+              v-for="dict in storeList"
+              :key="dict.id"
+              :label="dict.storeName"
+              :value="dict.storeId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- <el-form-item label="供应商ID" prop="supplierId">
+          <el-input v-model="form.supplierId" placeholder="请输入供应商ID" />
+        </el-form-item>-->
+
+        <el-form-item label="材料入库状态">
+          <el-radio-group v-model="form.status">
+            <el-radio
+              v-for="dict in dict.type.mms_pur_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <!-- <el-form-item label="审核人ID" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入审核人ID" />
+        </el-form-item>-->
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-divider content-position="center">材料与材料入库关联信息</el-divider>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button
+              type="primary"
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAddMmsReceivedMaterial"
+            >添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteMmsReceivedMaterial"
+            >删除</el-button>
+          </el-col>
+        </el-row>
+        <el-table
+          :data="mmsReceivedMaterialList"
+          :row-class-name="rowMmsReceivedMaterialIndex"
+          @selection-change="handleMmsReceivedMaterialSelectionChange"
+          ref="mmsReceivedMaterial"
+        >
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50" />
+          <el-table-column label="材料名称" prop="matId" width="150">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.matId" placeholder="请选择合适的材料">
+                <el-option
+                  v-for="dict in materialList"
+                  :key="dict.id"
+                  :label="dict.matName"
+                  :value="dict.matId"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column label="材料单价" prop="conUprice" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.conUprice" placeholder="请输入材料单价" />
+            </template>
+          </el-table-column>
+          <el-table-column label="入库数量" prop="inNum" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.inNum" placeholder="请输入入库数量" />
+            </template>
+          </el-table-column>
+          <el-table-column label="税率" prop="conTax" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.conTax" placeholder="请输入税率" />
+            </template>
+          </el-table-column>
+          <el-table-column label="含税金额" prop="conTprice" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.conTprice" placeholder="请输入含税金额" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import {
+  listReceived,
+  getReceived,
+  delReceived,
+  addReceived,
+  updateReceived
+} from "@/api/inventory/received";
+import { listContract, getContract } from "@/api/purchase/contract";
+import { listProject, getProject } from "@/api/project/project";
+import { listMaterial } from "@/api/material/material";
+import { listUser } from "@/api/system/user";
+import { listSupplier } from "@/api/supplier/supplier";
+import { listStore, getStoreByProId, updateStore, updateStoreReceived } from "@/api/storage/store";
+
+export default {
+  name: "Received",
+  dicts: ["mms_pur_status"],
+  data() {
+    return {
+      // 遮罩层
+      loading: true,
+      // 选中数组
+      ids: [],
+      // 子表选中数据
+      checkedMmsReceivedMaterial: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 显示搜索条件
+      showSearch: true,
+      // 总条数
+      total: 0,
+      // 材料入库表格数据
+      receivedList: [],
+
+      contractList: [],
+      projectList: [],
+      mmsContractMaterialList: [],
+      materialList: [],
+      userList: [],
+      storeList: [],
+      supplierList: [],
+      // 材料与材料入库关联表格数据
+      mmsReceivedMaterialList: [],
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      open: false,
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        inName: null,
+        conId: null,
+        proId: null,
+        supplierId: null,
+        storeId: null,
+        status: null,
+        userId: null
+      },
+      // 表单参数
+      form: {},
+
+      storeForm: {},
+      // 表单校验
+      rules: {
+        inName: [
+          { required: true, message: "材料入库名称不能为空", trigger: "blur" }
+        ],
+        conId: [
+          { required: true, message: "材料合同不能为空", trigger: "blur" }
+        ],
+
+        supplierId: [
+          { required: true, message: "供应商不能为空", trigger: "blur" }
+        ],
+        storeId: [{ required: true, message: "仓库不能为空", trigger: "blur" }]
+      }
+    };
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+    /** 查询材料入库列表 */
+    getList() {
+      this.loading = true;
+      listReceived(this.queryParams).then(response => {
+        this.receivedList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+      listProject().then(res => {
+        this.projectList = res.rows;
+      });
+      listMaterial().then(res => {
+        this.materialList = res.rows;
+      });
+      listUser().then(res => {
+        this.userList = res.rows;
+      });
+      listContract().then(res => {
+        this.contractList = res.rows;
+        // console.log(res.rows)
+      });
+      listSupplier().then(res => {
+        this.supplierList = res.rows;
+      });
+      listStore().then(res => {
+        this.storeList = res.rows;
+      });
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        inId: null,
+        inName: null,
+        conId: null,
+        proId: null,
+        supplierId: null,
+        storeId: null,
+        status: "0",
+        userId: null,
+        createBy: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null,
+        remark: null
+      };
+      this.mmsReceivedMaterialList = [];
+      this.resetForm("form");
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.inId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
+    },
+    //清除放入store中的参数
+    cleanStoreForm() {
+      this.storeForm = {
+        storeId: null,
+        proId: null,
+        storeName: null,
+        userId: null,
+        storePhone: null,
+        storeAddress: null,
+        status: "0",
+        createBy: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null
+      };
+    },
+    handleShowPro(scope) {
+      var pid = "";
+
+      getContract(scope)
+        .then(res => {
+          // console.log(scope);
+          // console.log(res.data);
+          this.form.proId = res.data.proId;
+          this.mmsReceivedMaterialList = res.data.mmsContractMaterialList;
+          this.pid = res.data.proId;
+          console.log(res.data.proId);
+          getStoreByProId(res.data.proId).then(res => {
+            this.storeList = res.data;
+            console.log(res.data);
+          });
+          console.log(res.data.mmsReceivedMaterialList);
+        })
+        .catch(err => {
+          this.$message.error(err.message);
+          console.log(err);
+        });
+
+      // console.log(pid)
+    },
+
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+      this.title = "添加材料入库";
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset();
+      const inId = row.inId || this.ids;
+      getReceived(inId).then(response => {
+        this.form = response.data;
+        this.mmsReceivedMaterialList = response.data.mmsReceivedMaterialList;
+        this.open = true;
+        this.title = "修改材料入库";
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.cleanStoreForm();
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          this.form.mmsReceivedMaterialList = this.mmsReceivedMaterialList;
+          if (this.form.inId != null) {
+            updateReceived(this.form).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addReceived(this.form).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+
+          //如果已审核通过，则将数据存入对应项目的仓库中
+          if (this.form.status == "2") {
+            this.storeForm = {
+              storeId: null,
+              proId: null,
+              storeName: null,
+              userId: null,
+              storePhone: null,
+              storeAddress: null,
+              status: "0",
+              createBy: null,
+              createTime: null,
+              updateBy: null,
+              updateTime: null
+            };
+            this.storeForm.storeId = this.form.storeId;
+            this.storeForm.proId = this.form.proId;
+            this.storeForm.mmsStoreMaterialList = this.form.mmsReceivedMaterialList;
+            debugger
+            console.log(this.storeForm.mmsStoreMaterialList)
+            updateStoreReceived(this.storeForm).then(res => {
+              console.log(this.form)
+              this.$modal.msgSuccess("已更新仓库内容");
+            });
+          }
+        }
+      });
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const inIds = row.inId || this.ids;
+      this.$modal
+        .confirm('是否确认删除材料入库编号为"' + inIds + '"的数据项？')
+        .then(function() {
+          return delReceived(inIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
+    },
+    /** 材料与材料入库关联序号 */
+    rowMmsReceivedMaterialIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** 材料与材料入库关联添加按钮操作 */
+    handleAddMmsReceivedMaterial() {
+      let obj = {};
+      obj.matId = "";
+      obj.conUprice = "";
+      obj.inNum = "";
+      obj.conTax = "";
+      obj.conTprice = "";
+      obj.remark = "";
+      this.mmsReceivedMaterialList.push(obj);
+    },
+    /** 材料与材料入库关联删除按钮操作 */
+    handleDeleteMmsReceivedMaterial() {
+      if (this.checkedMmsReceivedMaterial.length == 0) {
+        this.$modal.msgError("请先选择要删除的材料与材料入库关联数据");
+      } else {
+        const mmsReceivedMaterialList = this.mmsReceivedMaterialList;
+        const checkedMmsReceivedMaterial = this.checkedMmsReceivedMaterial;
+        this.mmsReceivedMaterialList = mmsReceivedMaterialList.filter(function(
+          item
+        ) {
+          return checkedMmsReceivedMaterial.indexOf(item.index) == -1;
+        });
+      }
+    },
+    /** 复选框选中数据 */
+    handleMmsReceivedMaterialSelectionChange(selection) {
+      this.checkedMmsReceivedMaterial = selection.map(item => item.index);
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      this.download(
+        "inventory/received/export",
+        {
+          ...this.queryParams
+        },
+        `received_${new Date().getTime()}.xlsx`
+      );
+    }
+  }
+};
+</script>

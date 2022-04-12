@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.material.mapper.MmsMaterialMapper">
+    
+    <resultMap type="MmsMaterial" id="MmsMaterialResult">
+        <result property="matId"    column="mat_id"    />
+        <result property="matName"    column="mat_name"    />
+        <result property="matSize"    column="mat_size"    />
+        <result property="matUnit"    column="mat_unit"    />
+        <result property="matType"    column="mat_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectMmsMaterialVo">
+        select mat_id, mat_name, mat_size, mat_unit, mat_type, create_by, create_time, update_by, update_time from mms_material
+    </sql>
+
+    <select id="selectMmsMaterialList" parameterType="MmsMaterial" resultMap="MmsMaterialResult">
+        <include refid="selectMmsMaterialVo"/>
+        <where>  
+            <if test="matName != null  and matName != ''"> and mat_name like concat('%', #{matName}, '%')</if>
+            <if test="matSize != null "> and mat_size = #{matSize}</if>
+            <if test="matUnit != null  and matUnit != ''"> and mat_unit = #{matUnit}</if>
+            <if test="matType != null  and matType != ''"> and mat_type = #{matType}</if>
+        </where>
+    </select>
+    
+    <select id="selectMmsMaterialByMatId" parameterType="Long" resultMap="MmsMaterialResult">
+        <include refid="selectMmsMaterialVo"/>
+        where mat_id = #{matId}
+    </select>
+        
+    <insert id="insertMmsMaterial" parameterType="MmsMaterial" useGeneratedKeys="true" keyProperty="matId">
+        insert into mms_material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="matName != null and matName != ''">mat_name,</if>
+            <if test="matSize != null">mat_size,</if>
+            <if test="matUnit != null">mat_unit,</if>
+            <if test="matType != null">mat_type,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="matName != null and matName != ''">#{matName},</if>
+            <if test="matSize != null">#{matSize},</if>
+            <if test="matUnit != null">#{matUnit},</if>
+            <if test="matType != null">#{matType},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMmsMaterial" parameterType="MmsMaterial">
+        update mms_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="matName != null and matName != ''">mat_name = #{matName},</if>
+            <if test="matSize != null">mat_size = #{matSize},</if>
+            <if test="matUnit != null">mat_unit = #{matUnit},</if>
+            <if test="matType != null">mat_type = #{matType},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where mat_id = #{matId}
+    </update>
+
+    <delete id="deleteMmsMaterialByMatId" parameterType="Long">
+        delete from mms_material where mat_id = #{matId}
+    </delete>
+
+    <delete id="deleteMmsMaterialByMatIds" parameterType="String">
+        delete from mms_material where mat_id in 
+        <foreach item="matId" collection="array" open="(" separator="," close=")">
+            #{matId}
+        </foreach>
+    </delete>
+</mapper>
