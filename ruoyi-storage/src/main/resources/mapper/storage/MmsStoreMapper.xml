@@ -160,28 +160,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
 
-    <update id="updateMmsStoreReceived" parameterType="MmsStore">
-        update mms_store
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="proId != null">pro_id = #{proId},</if>
-            <if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
-            <if test="userId != null">user_id = #{userId},</if>
-            <if test="storePhone != null">store_phone = #{storePhone},</if>
-            <if test="storeAddress != null">store_address = #{storeAddress},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="createBy != null">create_by = #{createBy},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateBy != null">update_by = #{updateBy},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </trim>
-        where store_id = #{storeId}
-    </update>
-
-    <insert id="batchMmsStoreMaterialReceived">
-        insert into mms_store_material( id, mat_id, store_id, mat_uprice, mat_num, mat_tprice, create_by, create_time, update_by, update_time, remark) values
-        <foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{item.matId}, #{item.storeId}, #{item.conUprice}, #{item.inNum}, #{item.conTprice}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime}, #{item.remark})
-        </foreach>
-    </insert>
 
 </mapper>

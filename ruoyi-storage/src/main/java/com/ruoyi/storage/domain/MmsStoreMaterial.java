@@ -30,7 +30,7 @@ public class MmsStoreMaterial extends BaseEntity
     /** 材料单价 */
 
     @Excel(name = "材料单价")
-    private Long matUprice;
+    private Double matUprice;
 
     /** 材料数量 */
     @Excel(name = "材料数量")
@@ -38,7 +38,7 @@ public class MmsStoreMaterial extends BaseEntity
 
     /** 材料总价 */
     @Excel(name = "材料总价")
-    private Long matTprice;
+    private Double matTprice;
 
     public void setId(Long id) 
     {
@@ -67,32 +67,29 @@ public class MmsStoreMaterial extends BaseEntity
     {
         return storeId;
     }
-    public void setMatUprice(Long matUprice) 
-    {
+
+    public Double getMatUprice() {
+        return matUprice;
+    }
+
+    public void setMatUprice(Double matUprice) {
         this.matUprice = matUprice;
     }
 
-    public Long getMatUprice() 
-    {
-        return matUprice;
+    public Long getMatNum() {
+        return matNum;
     }
-    public void setMatNum(Long matNum) 
-    {
+
+    public void setMatNum(Long matNum) {
         this.matNum = matNum;
     }
 
-    public Long getMatNum() 
-    {
-        return matNum;
-    }
-    public void setMatTprice(Long matTprice) 
-    {
-        this.matTprice = matTprice;
+    public Double getMatTprice() {
+        return matTprice;
     }
 
-    public Long getMatTprice() 
-    {
-        return matTprice;
+    public void setMatTprice(Double matTprice) {
+        this.matTprice = matTprice;
     }
 
     @Override

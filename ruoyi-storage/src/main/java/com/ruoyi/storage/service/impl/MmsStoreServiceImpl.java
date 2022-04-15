@@ -2,7 +2,6 @@ package com.ruoyi.storage.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.storage.domain.MmsStoreReceived;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -115,35 +114,7 @@ public class MmsStoreServiceImpl implements IMmsStoreService
         return mmsStoreMapper.selectMmsStoreByProId(proId);
     }
 
-    //材料入库时更新仓库
-    @Override
-    public int updateMmsStoreReceived(MmsStore mmsStore) {
-        //添加时间
-        mmsStore.setUpdateTime(DateUtils.getNowDate());
-        mmsStoreMapper.deleteMmsStoreMaterialByStoreId(mmsStore.getStoreId());
-        insertMmsStoreMaterialReceived(mmsStore);
-        return mmsStoreMapper.updateMmsStore(mmsStore);
-    }
 
-    private void insertMmsStoreMaterialReceived(MmsStore mmsStore) {
-        List<MmsStoreReceived> mmsStoreReceivedList = mmsStore.getMmsStoreReceivedList();
-        Long storeId = mmsStore.getStoreId();
-
-        if (StringUtils.isNotNull(mmsStoreReceivedList))
-        {
-            List<MmsStoreReceived> list = new ArrayList<MmsStoreReceived>();
-            for (MmsStoreReceived mmsStoreReceived : mmsStoreReceivedList)
-            {
-                mmsStoreReceived.setStoreId(storeId);
-                list.add(mmsStoreReceived);
-
-            }
-            if (list.size() > 0)
-            {
-                mmsStoreMapper.batchMmsStoreMaterialReceived(list);
-            }
-        }
-    }
 
     /**
      * 新增材料与仓库关联信息

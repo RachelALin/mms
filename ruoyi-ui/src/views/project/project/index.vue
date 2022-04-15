@@ -164,11 +164,11 @@
 
     <el-table v-loading="loading" :data="projectList" @selection-change="handleSelectionChange" stripe border height="250">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column fixed label="项目ID" align="center" prop="proId" />
+      <el-table-column fixed label="项目序号" align="center" prop="proId" />
       <el-table-column fixed label="项目名称" align="center" prop="proName" />
     
       <el-table-column fixed label="工程类型" align="center" prop="projectType.typeName" />
-      <el-table-column label="工程面积" align="center" prop="proArea" />
+      <el-table-column label="工程面积/㎡" align="center" prop="proArea" />
       <el-table-column label="建设单位" align="center" prop="proUnit" />
       <el-table-column label="监督单位" align="center" prop="supervisionUnit" />
       <el-table-column label="工程地点" align="center" prop="proAddress" />

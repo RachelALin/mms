@@ -24,7 +24,7 @@ public class MmsMaterial extends BaseEntity
 
     /** 材料规格 */
     @Excel(name = "材料规格")
-    private Long matSize;
+    private String matSize;
 
     /** 材料单位 */
     @Excel(name = "材料单位")
@@ -52,16 +52,16 @@ public class MmsMaterial extends BaseEntity
     {
         return matName;
     }
-    public void setMatSize(Long matSize) 
-    {
+
+    public String getMatSize() {
+        return matSize;
+    }
+
+    public void setMatSize(String matSize) {
         this.matSize = matSize;
     }
 
-    public Long getMatSize() 
-    {
-        return matSize;
-    }
-    public void setMatUnit(String matUnit) 
+    public void setMatUnit(String matUnit)
     {
         this.matUnit = matUnit;
     }

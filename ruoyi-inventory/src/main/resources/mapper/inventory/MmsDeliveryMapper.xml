@@ -17,6 +17,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <association property="store"    column="store_id" javaType="MmsStore" resultMap="MmsStoreResult" />
+        <association property="user"    column="user_id" javaType="SysUser" resultMap="userResult" />
+        <association property="project"    column="pro_id" javaType="MmsProject" resultMap="MmsProjectResult" />
+        <association property="received"    column="in_id" javaType="MmsReceived" resultMap="MmsReceivedResult" />
+
+    </resultMap>
+
+    <resultMap type="MmsStore" id="MmsStoreResult">
+        <result property="storeId"    column="store_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeName"    column="store_name"    />
+    </resultMap>
+
+
+    <resultMap type="MmsProject" id="MmsProjectResult">
+        <result property="proId"    column="pro_id"    />
+        <result property="proName"    column="pro_name"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"       column="user_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+    </resultMap>
+
+    <resultMap type="MmsReceived" id="MmsReceivedResult">
+        <result property="inId"    column="in_id"    />
+        <result property="inName"    column="in_name"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeId"    column="store_id"    />
     </resultMap>
 
     <resultMap id="MmsDeliveryMmsDeliveryMaterialResult" type="MmsDelivery" extends="MmsDeliveryResult">
@@ -36,18 +69,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMmsDeliveryVo">
-        select out_id, out_name, in_id, pro_id, store_id, status, user_id, create_by, create_time, update_by, update_time, remark from mms_delivery
+        select a.out_id, a.out_name, a.in_id, a.pro_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+        u.user_name, u.nick_name, u.email, u.phonenumber, u.sex, t.pro_id, t.pro_name, p.in_id, p.in_name,p.pro_id,p.store_id,
+        e.store_id, e.store_name, e.pro_id
+        from mms_delivery a
+        left join sys_user u on u.user_id = a.user_id
+        left join mms_project t on t.pro_id = a.pro_id
+        left join mms_received p on p.in_id = a.in_id
+        left join mms_store e on e.store_id = a.store_id
     </sql>
 
     <select id="selectMmsDeliveryList" parameterType="MmsDelivery" resultMap="MmsDeliveryResult">
         <include refid="selectMmsDeliveryVo"/>
         <where>  
-            <if test="outName != null  and outName != ''"> and out_name like concat('%', #{outName}, '%')</if>
-            <if test="inId != null "> and in_id = #{inId}</if>
-            <if test="proId != null "> and pro_id = #{proId}</if>
-            <if test="storeId != null "> and store_id = #{storeId}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="outName != null  and outName != ''"> and a.out_name like concat('%', #{outName}, '%')</if>
+            <if test="inId != null "> and a.in_id = #{inId}</if>
+            <if test="proId != null "> and a.pro_id = #{proId}</if>
+            <if test="storeId != null "> and a.store_id = #{storeId}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+            <if test="userId != null "> and a.user_id = #{userId}</if>
         </where>
     </select>
     

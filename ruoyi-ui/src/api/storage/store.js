@@ -56,7 +56,7 @@ export function delStore(storeId) {
 export function updateStoreReceived(data) {
   return request({
     url: '/storage/store/received',
-    method: 'put',
+    method: 'post',
     data: data
   })
 }

@@ -92,7 +92,7 @@
 
     <el-table v-loading="loading" :data="materialList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="材料ID" align="center" prop="matId" />
+      <!-- <el-table-column label="材料ID" align="center" prop="matId" /> -->
       <el-table-column label="材料名称" align="center" prop="matName" />
       <el-table-column label="材料规格" align="center" prop="matSize" />
       <el-table-column label="材料单位" align="center" prop="matUnit" />

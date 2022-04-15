@@ -126,7 +126,7 @@
 
     <el-table v-loading="loading" :data="needList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="需用计划序号" align="center" prop="needId" />
+      <!-- <el-table-column label="需用计划序号" align="center" prop="needId" /> -->
       <el-table-column label="需用计划名称" align="center" prop="needName" />
       <el-table-column label="原计划名称" align="center" prop="plan.planName" />
       <el-table-column label="项目名称" align="center" prop="project.proName" />

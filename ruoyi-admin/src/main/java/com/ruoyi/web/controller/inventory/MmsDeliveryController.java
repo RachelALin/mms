@@ -1,7 +1,11 @@
 package com.ruoyi.web.controller.inventory;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +37,8 @@ public class MmsDeliveryController extends BaseController
 {
     @Autowired
     private IMmsDeliveryService mmsDeliveryService;
-
+    @Autowired
+    private TokenService tokenService;
     /**
      * 查询材料出库列表
      */
@@ -75,8 +80,10 @@ public class MmsDeliveryController extends BaseController
     @PreAuthorize("@ss.hasPermi('inventory:delivery:add')")
     @Log(title = "材料出库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody MmsDelivery mmsDelivery)
+    public AjaxResult add(@RequestBody MmsDelivery mmsDelivery, HttpServletRequest request)
     {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        mmsDelivery.setUserId(loginUser.getUserId());
         return toAjax(mmsDeliveryService.insertMmsDelivery(mmsDelivery));
     }
 
@@ -86,8 +93,10 @@ public class MmsDeliveryController extends BaseController
     @PreAuthorize("@ss.hasPermi('inventory:delivery:edit')")
     @Log(title = "材料出库", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody MmsDelivery mmsDelivery)
+    public AjaxResult edit(@RequestBody MmsDelivery mmsDelivery, HttpServletRequest request)
     {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        mmsDelivery.setUserId(loginUser.getUserId());
         return toAjax(mmsDeliveryService.updateMmsDelivery(mmsDelivery));
     }
 

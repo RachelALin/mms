@@ -309,7 +309,7 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="材料单价" prop="conUprice" width="150">
+          <el-table-column label="材料单价/元" prop="conUprice" width="150">
             <template slot-scope="scope">
               <el-input v-model="scope.row.conUprice" placeholder="请输入材料单价" />
             </template>
@@ -504,8 +504,9 @@ export default {
             console.log(scope);
             console.log(res.data);
             this.form.proId = res.data.proId;
-         
-            this.mmsContractMaterialList = res.data.mmsNeedMaterialList;
+            var list = res.data.mmsNeedMaterialList;
+            var obj = JSON.parse(JSON.stringify(list).replace(/matUprice/g,"conUprice"));
+            this.mmsContractMaterialList = obj;
 
             console.log(res.data.mmsNeedMaterialList)
       });

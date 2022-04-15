@@ -3,7 +3,6 @@ package com.ruoyi.storage.mapper;
 import java.util.List;
 import com.ruoyi.storage.domain.MmsStore;
 import com.ruoyi.storage.domain.MmsStoreMaterial;
-import com.ruoyi.storage.domain.MmsStoreReceived;
 
 /**
  * 仓库管理Mapper接口
@@ -101,5 +100,5 @@ public interface MmsStoreMapper
      */
     public int updateMmsStoreReceived(MmsStore mmsStore);
 
-    public int batchMmsStoreMaterialReceived(List<MmsStoreReceived> mmsStoreReceivedList);
+
 }

@@ -122,9 +122,10 @@
 
     <el-table v-loading="loading" :data="storeList" @selection-change="handleSelectionChange" stripe border>
       <el-table-column type="selection" width="80" align="center" />
-      <el-table-column label="仓库序号" align="center" prop="storeId" />
-      <el-table-column label="项目名称" align="center" prop="project.proName" />
+      <!-- <el-table-column label="仓库序号" align="center" prop="storeId" /> -->
       <el-table-column label="仓库名称" align="center" prop="storeName" />
+      <el-table-column label="项目名称" align="center" prop="project.proName" />
+    
       <el-table-column label="仓管者" align="center" prop="user.nickName" />
       <el-table-column label="仓库电话" align="center" prop="storePhone" />
       <el-table-column label="仓库地址" align="center" prop="storeAddress" />

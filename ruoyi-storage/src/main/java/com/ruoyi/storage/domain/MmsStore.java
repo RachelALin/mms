@@ -50,6 +50,8 @@ public class MmsStore extends BaseEntity
     private MmsProject project;
 
     private SysUser user;
+    /** 材料与仓库关联信息 */
+    private List<MmsStoreMaterial> mmsStoreMaterialList;
 
     public MmsProject getProject() {
         return project;
@@ -67,19 +69,17 @@ public class MmsStore extends BaseEntity
         this.user = user;
     }
 
-    /** 材料与仓库关联信息 */
-    private List<MmsStoreMaterial> mmsStoreMaterialList;
 
-
-    private List<MmsStoreReceived> mmsStoreReceivedList;
-
-    public List<MmsStoreReceived> getMmsStoreReceivedList() {
-        return mmsStoreReceivedList;
-    }
-
-    public void setMmsStoreReceivedList(List<MmsStoreReceived> mmsStoreReceivedList) {
-        this.mmsStoreReceivedList = mmsStoreReceivedList;
-    }
+//
+//    private List<MmsStoreReceived> mmsStoreReceivedList;
+//
+//    public List<MmsStoreReceived> getMmsStoreReceivedList() {
+//        return mmsStoreReceivedList;
+//    }
+//
+//    public void setMmsStoreReceivedList(List<MmsStoreReceived> mmsStoreReceivedList) {
+//        this.mmsStoreReceivedList = mmsStoreReceivedList;
+//    }
 
     public void setStoreId(Long storeId)
     {

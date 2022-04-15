@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.framework.web.service.TokenService;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -97,13 +98,13 @@ public class MmsStoreController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('storage:store:edit')")
     @Log(title = "材料入库修改仓库管理", businessType = BusinessType.UPDATE)
-    @RequestMapping(value = "/received", method= RequestMethod.PUT)
+    @RequestMapping(value = "/received", method= RequestMethod.POST)
     public AjaxResult editDueToReceived(@RequestBody MmsStore mmsStore, HttpServletRequest request)
     {
         LoginUser loginUser = tokenService.getLoginUser(request);
         System.out.printf(mmsStore.toString());
         mmsStore.setUserId(loginUser.getUserId());
-        return toAjax(mmsStoreService.updateMmsStoreReceived(mmsStore));
+        return toAjax(mmsStoreService.updateMmsStore(mmsStore));
     }
 
 

@@ -2,7 +2,6 @@ package com.ruoyi.storage.service;
 
 import java.util.List;
 import com.ruoyi.storage.domain.MmsStore;
-import com.ruoyi.storage.domain.MmsStoreReceived;
 
 /**
  * 仓库管理Service接口
@@ -68,5 +67,5 @@ public interface IMmsStoreService
      */
     public List<MmsStore> selectMmsStoreByProId(Long proId);
 
-    public int updateMmsStoreReceived(MmsStore mmsStore);
+
 }

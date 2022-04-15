@@ -1,6 +1,12 @@
 package com.ruoyi.inventory.domain;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.project.domain.MmsProject;
+import com.ruoyi.purchase.domain.MmsContract;
+import com.ruoyi.storage.domain.MmsStore;
+import com.ruoyi.supplier.domain.MmsSupplier;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -42,6 +48,45 @@ public class MmsDelivery extends BaseEntity
     /** 审核人ID（只有审核人才能改计划状态） */
     @Excel(name = "审核人ID", readConverterExp = "只=有审核人才能改计划状态")
     private Long userId;
+    private MmsProject project;
+
+    private SysUser user;
+
+    private MmsReceived received;
+
+    private MmsStore store;
+
+    public MmsProject getProject() {
+        return project;
+    }
+
+    public void setProject(MmsProject project) {
+        this.project = project;
+    }
+
+    public SysUser getUser() {
+        return user;
+    }
+
+    public void setUser(SysUser user) {
+        this.user = user;
+    }
+
+    public MmsReceived getReceived() {
+        return received;
+    }
+
+    public void setReceived(MmsReceived received) {
+        this.received = received;
+    }
+
+    public MmsStore getStore() {
+        return store;
+    }
+
+    public void setStore(MmsStore store) {
+        this.store = store;
+    }
 
     /** 材料与材料出库关联信息 */
     private List<MmsDeliveryMaterial> mmsDeliveryMaterialList;

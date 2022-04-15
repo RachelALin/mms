@@ -200,7 +200,7 @@
         <el-form-item label="材料合同" prop="conId">
           <el-select
             v-model="form.conId"
-            placeholder="请选择需用计划名称"
+            placeholder="请选择材料合同名称"
             @change="handleShowPro(form.conId)"
           >
             <el-option
@@ -504,7 +504,9 @@ export default {
           // console.log(scope);
           // console.log(res.data);
           this.form.proId = res.data.proId;
-          this.mmsReceivedMaterialList = res.data.mmsContractMaterialList;
+          var list = res.data.mmsContractMaterialList;
+          var obj = JSON.parse(JSON.stringify(list).replace(/conNum/g,"inNum"));
+          this.mmsReceivedMaterialList = obj;
           this.pid = res.data.proId;
           console.log(res.data.proId);
           getStoreByProId(res.data.proId).then(res => {
@@ -575,11 +577,16 @@ export default {
             };
             this.storeForm.storeId = this.form.storeId;
             this.storeForm.proId = this.form.proId;
-            this.storeForm.mmsStoreMaterialList = this.form.mmsReceivedMaterialList;
-            debugger
-            console.log(this.storeForm.mmsStoreMaterialList)
+            var list = this.form.mmsReceivedMaterialList;
+            var obj = JSON.parse(JSON.stringify(list).replace(/conUprice/g,"matUprice"));
+            list = JSON.parse(JSON.stringify(obj).replace(/conTprice/g,"matTprice"));
+            obj = JSON.parse(JSON.stringify(list).replace(/inNum/g,"matNum"));
+            this.storeForm.mmsStoreMaterialList = obj;
+            this.storeForm.status = this.form.status;
+        
+             console.log(this.storeForm)
             updateStoreReceived(this.storeForm).then(res => {
-              console.log(this.form)
+              console.log(this.storeForm)
               this.$modal.msgSuccess("已更新仓库内容");
             });
           }

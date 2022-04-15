@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
       <el-form-item label="材料出库名称" prop="outName">
         <el-input
           v-model="queryParams.outName"
@@ -10,32 +10,46 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="材料入库ID" prop="inId">
-        <el-input
-          v-model="queryParams.inId"
-          placeholder="请输入材料入库ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="材料入库名称" prop="inId">
+      <el-select v-model="queryParams.inId" placeholder="请选择材料入库名称" clearable size="small">
+          <el-option
+            v-for="dict in receivedList"
+            :key="dict.id"
+            :label="dict.inName"
+            :value="dict.inId"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="项目ID" prop="proId">
-        <el-input
-          v-model="queryParams.proId"
-          placeholder="请输入项目ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      
+      <!-- <el-form-item label="材料合同" prop="conId">
+        <el-select v-model="queryParams.conId" placeholder="请选择材料合同" clearable size="small">
+          <el-option
+            v-for="dict in contractList"
+            :key="dict.id"
+            :label="dict.conName"
+            :value="dict.conId"
+          />
+        </el-select>
+      </el-form-item> -->
+    <el-form-item label="项目名称" prop="conId">
+        <el-select v-model="queryParams.conId" placeholder="请选择项目" clearable size="small">
+          <el-option
+            v-for="dict in projectList"
+            :key="dict.id"
+            :label="dict.proName"
+            :value="dict.proId"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="仓库ID" prop="storeId">
-        <el-input
-          v-model="queryParams.storeId"
-          placeholder="请输入仓库ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+    <el-form-item label="仓库名称" prop="storeId">
+        <el-select v-model="queryParams.storeId" placeholder="请选择仓库" clearable size="small">
+          <el-option
+            v-for="dict in storeList"
+            :key="dict.id"
+            :label="dict.storeName"
+            :value="dict.storeId"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="材料出库状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择材料出库状态" clearable size="small">
@@ -47,14 +61,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="审核人ID" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入审核人ID"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+       <el-form-item label="审核人" prop="userId">
+        <el-select v-model="queryParams.userId" placeholder="请选择审核人" clearable size="small">
+          <el-option
+            v-for="dict in userList"
+            :key="dict.id"
+            :label="dict.nickName"
+            :value="dict.userId"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -109,18 +124,18 @@
     </el-row>
 
     <el-table v-loading="loading" :data="deliveryList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="材料出库ID" align="center" prop="outId" />
+      <!-- <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="材料出库ID" align="center" prop="outId" /> -->
       <el-table-column label="材料出库名称" align="center" prop="outName" />
-      <el-table-column label="材料入库ID" align="center" prop="inId" />
-      <el-table-column label="项目ID" align="center" prop="proId" />
-      <el-table-column label="仓库ID" align="center" prop="storeId" />
+      <el-table-column label="材料入库名称" align="center" prop="received.inName" />
+      <el-table-column label="项目名称" align="center" prop="project.proName" />
+      <el-table-column label="仓库名称" align="center" prop="store.storeName" />
       <el-table-column label="材料出库状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.mms_pur_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="审核人ID" align="center" prop="userId" />
+      <el-table-column label="审核人" align="center" prop="user.nickName" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -152,18 +167,44 @@
 
     <!-- 添加或修改材料出库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="材料出库名称" prop="outName">
           <el-input v-model="form.outName" placeholder="请输入材料出库名称" />
         </el-form-item>
-        <el-form-item label="材料入库ID" prop="inId">
-          <el-input v-model="form.inId" placeholder="请输入材料入库ID" />
+    
+        <el-form-item label="材料入库名称" prop="inId">
+          <el-select
+            v-model="form.inId"
+            placeholder="请选择材料入库名称"
+            @change="handleShowPro(form.inId)"
+          >
+            <el-option
+              v-for="dict in receivedList"
+              :key="dict.id"
+              :label="dict.inName"
+              :value="dict.inId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="项目ID" prop="proId">
-          <el-input v-model="form.proId" placeholder="请输入项目ID" />
+        <el-form-item label="项目名称" prop="proId">
+           <el-select v-model="form.proId" placeholder="请选择合适项目">
+            <el-option
+              v-for="dict in projectList"
+              :key="dict.id"
+              :label="dict.proName"
+              :value="dict.proId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="仓库ID" prop="storeId">
-          <el-input v-model="form.storeId" placeholder="请输入仓库ID" />
+        <el-form-item label="仓库名称" prop="storeId">
+          <el-select v-model="form.storeId" placeholder="请选择合适仓库">
+            <el-option
+              v-for="dict in storeList"
+              :key="dict.id"
+              :label="dict.storeName"
+              :value="dict.storeId"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="材料出库状态">
           <el-radio-group v-model="form.status">
@@ -174,9 +215,9 @@
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="审核人ID" prop="userId">
+        <!-- <el-form-item label="审核人ID" prop="userId">
           <el-input v-model="form.userId" placeholder="请输入审核人ID" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -192,9 +233,16 @@
         <el-table :data="mmsDeliveryMaterialList" :row-class-name="rowMmsDeliveryMaterialIndex" @selection-change="handleMmsDeliveryMaterialSelectionChange" ref="mmsDeliveryMaterial">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="材料ID" prop="matId" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.matId" placeholder="请输入材料ID" />
+          <el-table-column label="材料名称" prop="matId" width="150">
+           <template slot-scope="scope">
+              <el-select v-model="scope.row.matId" placeholder="请选择合适的材料">
+                <el-option
+                  v-for="dict in materialList"
+                  :key="dict.id"
+                  :label="dict.matName"
+                  :value="dict.matId"
+                ></el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="出库数量" prop="outNum" width="150">
@@ -214,7 +262,12 @@
 
 <script>
 import { listDelivery, getDelivery, delDelivery, addDelivery, updateDelivery } from "@/api/inventory/delivery";
-
+import { listReceived, getReceived } from "@/api/inventory/received";
+import { listProject, getProject } from "@/api/project/project";
+import { listMaterial } from "@/api/material/material";
+import { listUser } from "@/api/system/user";
+import { listSupplier } from "@/api/supplier/supplier";
+import { listStore, getStoreByProId, updateStore, updateStoreReceived } from "@/api/storage/store";
 export default {
   name: "Delivery",
   dicts: ['mms_pur_status'],
@@ -236,6 +289,13 @@ export default {
       total: 0,
       // 材料出库表格数据
       deliveryList: [],
+      receivedList: [],
+      projectList: [],
+      mmsReceivedMaterialList: [],
+      materialList: [],
+      userList: [],
+      storeList: [],
+      supplierList: [],
       // 材料与材料出库关联表格数据
       mmsDeliveryMaterialList: [],
       // 弹出层标题
@@ -269,9 +329,9 @@ export default {
         storeId: [
           { required: true, message: "仓库ID不能为空", trigger: "blur" }
         ],
-        userId: [
-          { required: true, message: "审核人ID不能为空", trigger: "blur" }
-        ],
+        // userId: [
+        //   { required: true, message: "审核人ID不能为空", trigger: "blur" }
+        // ],
       }
     };
   },
@@ -284,8 +344,30 @@ export default {
       this.loading = true;
       listDelivery(this.queryParams).then(response => {
         this.deliveryList = response.rows;
+        console.log(response.rows);
+        
         this.total = response.total;
         this.loading = false;
+      });
+      listReceived().then(res => {
+        this.receivedList = res.rows;
+      });
+      listProject().then(res => {
+        this.projectList = res.rows;
+      });
+      listMaterial().then(res => {
+        this.materialList = res.rows;
+        console.log(res.rows);
+        
+      });
+      listUser().then(res => {
+        this.userList = res.rows;
+      });
+      listSupplier().then(res => {
+        this.supplierList = res.rows;
+      });
+      listStore().then(res => {
+        this.storeList = res.rows;
       });
     },
     // 取消按钮
@@ -321,6 +403,32 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
       this.handleQuery();
+    },
+
+  handleShowPro(scope) {
+      var pid = "";
+
+      getReceived(scope)
+        .then(res => {
+          console.log("hhh");
+          console.log(res.data);
+          this.form.proId = res.data.proId;
+          this.form.storeId = res.data.storeId;
+          this.mmsDeliveryMaterialList = res.data.mmsReceivedMaterialList;
+          this.pid = res.data.proId;
+          console.log(res.data.proId);
+          getStoreByProId(res.data.proId).then(res => {
+            this.storeList = res.data;
+            console.log(res.data);
+          });
+          console.log(res.data.mmsReceivedMaterialList);
+        })
+        .catch(err => {
+          this.$message.error(err.message);
+          console.log(err);
+        });
+
+      // console.log(pid)
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
