@@ -1,7 +1,11 @@
 package com.ruoyi.web.controller.inventory;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +29,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 材料盘点Controller
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 @RestController
 @RequestMapping("/inventory/check")
@@ -33,7 +37,8 @@ public class MmsCheckController extends BaseController
 {
     @Autowired
     private IMmsCheckService mmsCheckService;
-
+    @Autowired
+    private TokenService tokenService;
     /**
      * 查询材料盘点列表
      */
@@ -75,8 +80,10 @@ public class MmsCheckController extends BaseController
     @PreAuthorize("@ss.hasPermi('inventory:check:add')")
     @Log(title = "材料盘点", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody MmsCheck mmsCheck)
+    public AjaxResult add(@RequestBody MmsCheck mmsCheck, HttpServletRequest request)
     {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        mmsCheck.setUserId(loginUser.getUserId());
         return toAjax(mmsCheckService.insertMmsCheck(mmsCheck));
     }
 
@@ -86,8 +93,10 @@ public class MmsCheckController extends BaseController
     @PreAuthorize("@ss.hasPermi('inventory:check:edit')")
     @Log(title = "材料盘点", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody MmsCheck mmsCheck)
+    public AjaxResult edit(@RequestBody MmsCheck mmsCheck, HttpServletRequest request)
     {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        mmsCheck.setUserId(loginUser.getUserId());
         return toAjax(mmsCheckService.updateMmsCheck(mmsCheck));
     }
 

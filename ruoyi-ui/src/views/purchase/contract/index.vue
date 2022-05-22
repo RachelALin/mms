@@ -140,7 +140,11 @@
 
     <el-table v-loading="loading" :data="contractList" @selection-change="handleSelectionChange" stripe border>
       <el-table-column type="selection" width="80" align="center" />
-      <el-table-column fixed label="合同序号" align="center" prop="conId" />
+      <el-table-column fixed label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+          </el-table-column>
       <el-table-column fixed label="合同名称" align="center" prop="conName" />
       <el-table-column fixed label="项目名称" align="center" prop="project.proName" />
   
@@ -296,7 +300,7 @@
         </el-row>
         <el-table :data="mmsContractMaterialList" :row-class-name="rowMmsContractMaterialIndex" @selection-change="handleMmsContractMaterialSelectionChange" ref="mmsContractMaterial">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
+         
            <el-table-column label="材料名称" prop="matId" width="150">
             <template slot-scope="scope">
               <el-select v-model="scope.row.matId" placeholder="请选择合适的材料">

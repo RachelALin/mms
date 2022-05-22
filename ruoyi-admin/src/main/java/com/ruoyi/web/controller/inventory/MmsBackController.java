@@ -1,7 +1,11 @@
 package com.ruoyi.web.controller.inventory;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +29,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 材料退库Controller
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 @RestController
 @RequestMapping("/inventory/back")
@@ -33,7 +37,8 @@ public class MmsBackController extends BaseController
 {
     @Autowired
     private IMmsBackService mmsBackService;
-
+    @Autowired
+    private TokenService tokenService;
     /**
      * 查询材料退库列表
      */
@@ -75,8 +80,10 @@ public class MmsBackController extends BaseController
     @PreAuthorize("@ss.hasPermi('inventory:back:add')")
     @Log(title = "材料退库", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody MmsBack mmsBack)
+    public AjaxResult add(@RequestBody MmsBack mmsBack, HttpServletRequest request )
     {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        mmsBack.setUserId(loginUser.getUserId());
         return toAjax(mmsBackService.insertMmsBack(mmsBack));
     }
 
@@ -86,8 +93,10 @@ public class MmsBackController extends BaseController
     @PreAuthorize("@ss.hasPermi('inventory:back:edit')")
     @Log(title = "材料退库", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody MmsBack mmsBack)
+    public AjaxResult edit(@RequestBody MmsBack mmsBack, HttpServletRequest request)
     {
+        LoginUser loginUser = tokenService.getLoginUser(request);
+        mmsBack.setUserId(loginUser.getUserId());
         return toAjax(mmsBackService.updateMmsBack(mmsBack));
     }
 

@@ -144,8 +144,11 @@
 
     <el-table v-loading="loading" :data="receivedList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="序号" align="center" prop="total" /> -->
-      <!-- <el-table-column label="材料入库序号" align="center" prop="inId" /> -->
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="材料入库名称" align="center" prop="inName" />
       <el-table-column label="材料合同名称" align="center" prop="contract.conName" />
       <el-table-column label="项目名称" align="center" prop="project.proName" />
@@ -501,8 +504,6 @@ export default {
 
       getContract(scope)
         .then(res => {
-          // console.log(scope);
-          // console.log(res.data);
           this.form.proId = res.data.proId;
           var list = res.data.mmsContractMaterialList;
           var obj = JSON.parse(JSON.stringify(list).replace(/conNum/g,"inNum"));

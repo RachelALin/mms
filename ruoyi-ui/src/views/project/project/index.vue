@@ -162,9 +162,13 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="projectList" @selection-change="handleSelectionChange" stripe border height="250">
+    <el-table v-loading="loading" :data="projectList" @selection-change="handleSelectionChange" stripe border >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column fixed label="项目序号" align="center" prop="proId" />
+      <el-table-column fixed label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column fixed label="项目名称" align="center" prop="proName" />
     
       <el-table-column fixed label="工程类型" align="center" prop="projectType.typeName" />

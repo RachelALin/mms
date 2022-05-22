@@ -64,7 +64,11 @@
 
     <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="供应商类型序号" align="center" prop="id" />
+       <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="类别名称" align="center" prop="typeName" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">

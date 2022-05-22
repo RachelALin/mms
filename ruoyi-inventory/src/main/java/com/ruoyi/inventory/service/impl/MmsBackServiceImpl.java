@@ -16,7 +16,7 @@ import com.ruoyi.inventory.service.IMmsBackService;
  * 材料退库Service业务层处理
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 @Service
 public class MmsBackServiceImpl implements IMmsBackService 

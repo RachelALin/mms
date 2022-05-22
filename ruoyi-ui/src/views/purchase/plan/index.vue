@@ -110,7 +110,11 @@
 
     <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="计划序号" align="center" prop="planId" v-show="false" />
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="计划名称" align="center" prop="planName" />
       <el-table-column label="项目名称" align="center" prop="project.proName" />
       <el-table-column label="材料总计划状态" align="center" prop="status">
@@ -210,7 +214,7 @@
           ref="mmsPlanMaterial"
         >
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50" />
+          
           <el-table-column label="材料名称" prop="matId" width="150">
             <template slot-scope="scope">
               <el-select v-model="scope.row.matId" placeholder="请选择合适的材料">

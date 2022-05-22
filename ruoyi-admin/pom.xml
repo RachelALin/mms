@@ -89,10 +89,6 @@
         </dependency>
         <dependency>
             <groupId>com.ruoyi</groupId>
-            <artifactId>store</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ruoyi</groupId>
             <artifactId>storage</artifactId>
             <version>3.8.1</version>
             <scope>compile</scope>

@@ -42,8 +42,8 @@
         <el-button
           :loading="loading"
           size="medium"
-          type="primary"
-          style="width:100%;"
+          
+          style="width:100%; background-color:#509A80; color:#fff"
           @click.native.prevent="handleLogin"
         >
           <span v-if="!loading">登 录</span>
@@ -56,7 +56,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2018-2022 ruoyi.vip All Rights Reserved.</span>
+      <span>Copyright © 2018-2022 mms All Rights Reserved.</span>
     </div>
   </div>
 </template>
@@ -106,10 +106,6 @@ export default {
   created() {
     this.getCode();
     this.getCookie();
-    // console.log("登录打印code");
-    // console.log(code);
-    // console.log("登录打印cookie");
-    // console.log(cookie);
   },
   methods: {
     getCode() {

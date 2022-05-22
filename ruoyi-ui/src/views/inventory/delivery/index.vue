@@ -20,19 +20,8 @@
           />
         </el-select>
       </el-form-item>
-      
-      <!-- <el-form-item label="材料合同" prop="conId">
-        <el-select v-model="queryParams.conId" placeholder="请选择材料合同" clearable size="small">
-          <el-option
-            v-for="dict in contractList"
-            :key="dict.id"
-            :label="dict.conName"
-            :value="dict.conId"
-          />
-        </el-select>
-      </el-form-item> -->
-    <el-form-item label="项目名称" prop="conId">
-        <el-select v-model="queryParams.conId" placeholder="请选择项目" clearable size="small">
+    <el-form-item label="项目名称" prop="proId">
+        <el-select v-model="queryParams.proId" placeholder="请选择项目" clearable size="small">
           <el-option
             v-for="dict in projectList"
             :key="dict.id"
@@ -124,8 +113,12 @@
     </el-row>
 
     <el-table v-loading="loading" :data="deliveryList" @selection-change="handleSelectionChange">
-      <!-- <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="材料出库ID" align="center" prop="outId" /> -->
+      <el-table-column type="selection" width="55" align="center" />
+     <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="材料出库名称" align="center" prop="outName" />
       <el-table-column label="材料入库名称" align="center" prop="received.inName" />
       <el-table-column label="项目名称" align="center" prop="project.proName" />
@@ -215,9 +208,7 @@
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <!-- <el-form-item label="审核人ID" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入审核人ID" />
-        </el-form-item> -->
+     
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -357,8 +348,6 @@ export default {
       });
       listMaterial().then(res => {
         this.materialList = res.rows;
-        console.log(res.rows);
-        
       });
       listUser().then(res => {
         this.userList = res.rows;
@@ -410,11 +399,12 @@ export default {
 
       getReceived(scope)
         .then(res => {
-          console.log("hhh");
-          console.log(res.data);
+          var list = res.data.mmsReceivedMaterialList;
+          var obj = JSON.parse(JSON.stringify(list).replace(/inNum/g,"outNum"));
+          this.mmsDeliveryMaterialList = obj;
           this.form.proId = res.data.proId;
           this.form.storeId = res.data.storeId;
-          this.mmsDeliveryMaterialList = res.data.mmsReceivedMaterialList;
+          // this.mmsDeliveryMaterialList = res.data.mmsReceivedMaterialList;
           this.pid = res.data.proId;
           console.log(res.data.proId);
           getStoreByProId(res.data.proId).then(res => {

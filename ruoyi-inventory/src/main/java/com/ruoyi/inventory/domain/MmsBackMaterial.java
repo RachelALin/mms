@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 材料与材料退库关联对象 mms_back_material
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 public class MmsBackMaterial extends BaseEntity
 {
@@ -22,12 +22,12 @@ public class MmsBackMaterial extends BaseEntity
     @Excel(name = "材料ID")
     private Long matId;
 
-    /** 材料出库ID */
-    @Excel(name = "材料出库ID")
+    /** 材料退库ID */
+    @Excel(name = "材料退库ID")
     private Long backId;
 
-    /** 出库数量 */
-    @Excel(name = "出库数量")
+    /** 退库数量 */
+    @Excel(name = "退库数量")
     private Long backNum;
 
     public void setId(Long id) 

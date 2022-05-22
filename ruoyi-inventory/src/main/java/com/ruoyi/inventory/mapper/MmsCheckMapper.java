@@ -8,7 +8,7 @@ import com.ruoyi.inventory.domain.MmsCheckMaterial;
  * 材料盘点Mapper接口
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 public interface MmsCheckMapper 
 {

@@ -8,7 +8,7 @@ import com.ruoyi.inventory.domain.MmsBackMaterial;
  * 材料退库Mapper接口
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 public interface MmsBackMapper 
 {

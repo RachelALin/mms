@@ -82,7 +82,11 @@
 
     <el-table v-loading="loading" :data="plandetailList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="材料与材料总计划表ID" align="center" prop="id" />
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="材料ID" align="center" prop="matId" />
       <el-table-column label="计划ID" align="center" prop="planId" />
       <el-table-column label="计划数量" align="center" prop="planNum" />

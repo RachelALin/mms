@@ -61,19 +61,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectMmsProjectList" parameterType="MmsProject" resultMap="MmsProjectResult">
         <include refid="selectMmsProjectVo"/>
         <where>  
-            <if test="proName != null  and proName != ''"> and pro_name like concat('%', #{proName}, '%')</if>
-            <if test="ptypeId != null "> and ptype_id = #{ptypeId}</if>
-            <if test="proArea != null "> and pro_area = #{proArea}</if>
-            <if test="proUnit != null  and proUnit != ''"> and pro_unit = #{proUnit}</if>
-            <if test="supervisionUnit != null  and supervisionUnit != ''"> and supervision_unit = #{supervisionUnit}</if>
-            <if test="proAddress != null  and proAddress != ''"> and pro_address = #{proAddress}</if>
-            <if test="proPhone != null  and proPhone != ''"> and pro_phone = #{proPhone}</if>
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="startDate != null "> and start_date = #{startDate}</if>
-            <if test="endDate != null "> and end_date = #{endDate}</if>
-            <if test="proNote != null  and proNote != ''"> and pro_note = #{proNote}</if>
-            <if test="taxWay != null  and taxWay != ''"> and tax_way = #{taxWay}</if>
+            <if test="proName != null  and proName != ''"> and p.pro_name like concat('%', #{proName}, '%')</if>
+            <if test="ptypeId != null "> and p.ptype_id = #{ptypeId}</if>
+            <if test="proArea != null "> and p.pro_area = #{proArea}</if>
+            <if test="proUnit != null  and proUnit != ''"> and p.pro_unit = #{proUnit}</if>
+            <if test="supervisionUnit != null  and supervisionUnit != ''"> and p.supervision_unit = #{supervisionUnit}</if>
+            <if test="proAddress != null  and proAddress != ''"> and p.pro_address = #{proAddress}</if>
+            <if test="proPhone != null  and proPhone != ''"> and p.pro_phone = #{proPhone}</if>
+            <if test="userId != null "> and p.user_id = #{userId}</if>
+            <if test="status != null  and status != ''"> and p.status = #{status}</if>
+            <if test="startDate != null "> and p.start_date = #{startDate}</if>
+            <if test="endDate != null "> and p.end_date = #{endDate}</if>
+            <if test="proNote != null  and proNote != ''"> and p.pro_note = #{proNote}</if>
+            <if test="taxWay != null  and taxWay != ''"> and p.tax_way = #{taxWay}</if>
         </where>
     </select>
     

@@ -119,7 +119,11 @@
 
     <el-table v-loading="loading" :data="supplierList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="供应商序号" align="center" prop="supplierId" />
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="供应商开户行" align="center" prop="supplierBank" />
       <el-table-column label="供应商银行账号" align="center" prop="supplierCard" />

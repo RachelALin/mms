@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="MmsBack" id="MmsBackResult">
         <result property="backId"    column="back_id"    />
         <result property="backName"    column="back_name"    />
+        <result property="outId"    column="out_id"    />
         <result property="proId"    column="pro_id"    />
         <result property="storeId"    column="store_id"    />
         <result property="status"    column="status"    />
@@ -16,6 +17,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <association property="store"    column="store_id" javaType="MmsStore" resultMap="MmsStoreResult" />
+        <association property="user"    column="user_id" javaType="SysUser" resultMap="userResult" />
+        <association property="project"    column="pro_id" javaType="MmsProject" resultMap="MmsProjectResult" />
+        <association property="delivery"    column="out_id" javaType="MmsDelivery" resultMap="MmsDeliveryResult" />
+    </resultMap>
+
+
+    <resultMap type="MmsStore" id="MmsStoreResult">
+        <result property="storeId"    column="store_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeName"    column="store_name"    />
+    </resultMap>
+
+
+    <resultMap type="MmsProject" id="MmsProjectResult">
+        <result property="proId"    column="pro_id"    />
+        <result property="proName"    column="pro_name"    />
+    </resultMap>
+
+    <resultMap id="userResult" type="SysUser">
+        <id     property="userId"       column="user_id"      />
+        <result property="userName"     column="user_name"    />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="sex"          column="sex"          />
+    </resultMap>
+
+    <resultMap type="MmsDelivery" id="MmsDeliveryResult">
+        <result property="outId"    column="out_id"    />
+        <result property="outName"    column="out_name"    />
+        <result property="inId"    column="in_id"    />
+        <result property="proId"    column="pro_id"    />
+        <result property="storeId"    column="store_id"    />
     </resultMap>
 
     <resultMap id="MmsBackMmsBackMaterialResult" type="MmsBack" extends="MmsBackResult">
@@ -35,13 +70,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMmsBackVo">
-        select back_id, back_name, pro_id, store_id, status, user_id, create_by, create_time, update_by, update_time, remark from mms_back
+        select a.back_id, a.back_name, a.out_id, a.pro_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+        u.user_name, u.nick_name, u.email, u.phonenumber, u.sex, t.pro_id, t.pro_name, p.out_id, p.out_name, p.in_id, p.store_id, p.pro_id,
+        e.store_id, e.store_name, e.pro_id
+        from mms_back a
+        left join sys_user u on u.user_id = a.user_id
+        left join mms_project t on t.pro_id = a.pro_id
+        left join mms_delivery p on p.out_id = a.out_id
+        left join mms_store e on e.store_id = a.store_id
     </sql>
 
     <select id="selectMmsBackList" parameterType="MmsBack" resultMap="MmsBackResult">
         <include refid="selectMmsBackVo"/>
         <where>  
             <if test="backName != null  and backName != ''"> and back_name like concat('%', #{backName}, '%')</if>
+            <if test="outId != null "> and out_id = #{outId}</if>
             <if test="proId != null "> and pro_id = #{proId}</if>
             <if test="storeId != null "> and store_id = #{storeId}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
@@ -50,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectMmsBackByBackId" parameterType="Long" resultMap="MmsBackMmsBackMaterialResult">
-        select a.back_id, a.back_name, a.pro_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
+        select a.back_id, a.back_name, a.out_id, a.pro_id, a.store_id, a.status, a.user_id, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,
  b.id as sub_id, b.mat_id as sub_mat_id, b.back_id as sub_back_id, b.back_num as sub_back_num, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time, b.remark as sub_remark
         from mms_back a
         left join mms_back_material b on b.back_id = a.back_id
@@ -61,6 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into mms_back
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="backName != null and backName != ''">back_name,</if>
+            <if test="outId != null">out_id,</if>
             <if test="proId != null">pro_id,</if>
             <if test="storeId != null">store_id,</if>
             <if test="status != null">status,</if>
@@ -73,6 +117,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="backName != null and backName != ''">#{backName},</if>
+            <if test="outId != null">#{outId},</if>
             <if test="proId != null">#{proId},</if>
             <if test="storeId != null">#{storeId},</if>
             <if test="status != null">#{status},</if>
@@ -89,6 +134,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update mms_back
         <trim prefix="SET" suffixOverrides=",">
             <if test="backName != null and backName != ''">back_name = #{backName},</if>
+            <if test="outId != null">out_id = #{outId},</if>
             <if test="proId != null">pro_id = #{proId},</if>
             <if test="storeId != null">store_id = #{storeId},</if>
             <if test="status != null">status = #{status},</if>

@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 材料与材料盘点关联对象 mms_check_material
  * 
  * @author linyuting
- * @date 2022-03-28
+ * @date 2022-04-26
  */
 public class MmsCheckMaterial extends BaseEntity
 {
@@ -25,10 +25,6 @@ public class MmsCheckMaterial extends BaseEntity
     /** 材料盘点ID */
     @Excel(name = "材料盘点ID")
     private Long cheId;
-
-    /** 账存数量 */
-    @Excel(name = "账存数量")
-    private Long num;
 
     /** 盘点数量 */
     @Excel(name = "盘点数量")
@@ -61,15 +57,6 @@ public class MmsCheckMaterial extends BaseEntity
     {
         return cheId;
     }
-    public void setNum(Long num) 
-    {
-        this.num = num;
-    }
-
-    public Long getNum() 
-    {
-        return num;
-    }
     public void setCheNum(Long cheNum) 
     {
         this.cheNum = cheNum;
@@ -86,7 +73,6 @@ public class MmsCheckMaterial extends BaseEntity
             .append("id", getId())
             .append("matId", getMatId())
             .append("cheId", getCheId())
-            .append("num", getNum())
             .append("cheNum", getCheNum())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

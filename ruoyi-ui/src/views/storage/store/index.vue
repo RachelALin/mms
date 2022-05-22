@@ -122,7 +122,11 @@
 
     <el-table v-loading="loading" :data="storeList" @selection-change="handleSelectionChange" stripe border>
       <el-table-column type="selection" width="80" align="center" />
-      <!-- <el-table-column label="仓库序号" align="center" prop="storeId" /> -->
+      <el-table-column label="序号" type="index" width="50" align="center">
+        <template slot-scope="scope">
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="仓库名称" align="center" prop="storeName" />
       <el-table-column label="项目名称" align="center" prop="project.proName" />
     
