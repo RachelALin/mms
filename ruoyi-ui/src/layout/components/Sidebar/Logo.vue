@@ -6,8 +6,8 @@
         <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <!-- <img v-if="logo" :src="logo" class="sidebar-logo" /> -->
-        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <img v-if="logo" :src="logo" class="sidebar-logo-big" />
+        <h3 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h3>
  
       </router-link>
     </transition>
@@ -56,7 +56,7 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
+  height: 120px;
   line-height: 50px;
   background: #2b2f3a;
   text-align: center;
@@ -71,8 +71,14 @@ export default {
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
+      
     }
-
+    & .sidebar-logo-big{
+      width: 60px;
+      height: 60px;
+      vertical-align: middle;
+      margin-top:20px;
+    }
     & .sidebar-title {
       display: inline-block;
       margin: 0;

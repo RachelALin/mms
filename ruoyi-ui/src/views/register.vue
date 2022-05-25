@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form">
-      <h3 class="title">MMS</h3>
+      <h3 class="title">注册</h3>
       <el-form-item prop="username">
         <el-input v-model="registerForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
@@ -47,8 +47,8 @@
         <el-button
           :loading="loading"
           size="medium"
-          type="primary"
-          style="width:100%;"
+        
+       style="width:100%; background-color:#509A80; color:#fff; boder-color:#509A80"
           @click.native.prevent="handleRegister"
         >
           <span v-if="!loading">注 册</span>
@@ -61,7 +61,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-register-footer">
-      <span>Copyright © 2018-2022 ruoyi.vip All Rights Reserved.</span>
+    <span>Copyright © 2018-2022 mms All Rights Reserved.</span>
     </div>
   </div>
 </template>
@@ -162,7 +162,7 @@ export default {
 
 .register-form {
   border-radius: 6px;
-  background: #ffffff;
+  background:  rgba(255,255,255,0.8);;
   width: 400px;
   padding: 25px 25px 5px 25px;
   .el-input {
