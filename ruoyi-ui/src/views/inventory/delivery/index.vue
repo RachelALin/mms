@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="120px"
+    >
       <el-form-item label="材料出库名称" prop="outName">
         <el-input
           v-model="queryParams.outName"
@@ -11,7 +17,7 @@
         />
       </el-form-item>
       <el-form-item label="材料入库名称" prop="inId">
-      <el-select v-model="queryParams.inId" placeholder="请选择材料入库名称" clearable size="small">
+        <el-select v-model="queryParams.inId" placeholder="请选择材料入库名称" clearable size="small">
           <el-option
             v-for="dict in receivedList"
             :key="dict.id"
@@ -20,7 +26,7 @@
           />
         </el-select>
       </el-form-item>
-    <el-form-item label="项目名称" prop="proId">
+      <el-form-item label="项目名称" prop="proId">
         <el-select v-model="queryParams.proId" placeholder="请选择项目" clearable size="small">
           <el-option
             v-for="dict in projectList"
@@ -30,7 +36,7 @@
           />
         </el-select>
       </el-form-item>
-    <el-form-item label="仓库名称" prop="storeId">
+      <el-form-item label="仓库名称" prop="storeId">
         <el-select v-model="queryParams.storeId" placeholder="请选择仓库" clearable size="small">
           <el-option
             v-for="dict in storeList"
@@ -50,7 +56,7 @@
           />
         </el-select>
       </el-form-item>
-       <el-form-item label="审核人" prop="userId">
+      <el-form-item label="审核人" prop="userId">
         <el-select v-model="queryParams.userId" placeholder="请选择审核人" clearable size="small">
           <el-option
             v-for="dict in userList"
@@ -114,7 +120,7 @@
 
     <el-table v-loading="loading" :data="deliveryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-     <el-table-column label="序号" type="index" width="50" align="center">
+      <el-table-column label="序号" type="index" width="50" align="center">
         <template slot-scope="scope">
           <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
         </template>
@@ -125,7 +131,7 @@
       <el-table-column label="仓库名称" align="center" prop="store.storeName" />
       <el-table-column label="材料出库状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.mms_pur_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.mms_pur_status" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column label="审核人" align="center" prop="user.nickName" />
@@ -149,7 +155,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -164,13 +170,9 @@
         <el-form-item label="材料出库名称" prop="outName">
           <el-input v-model="form.outName" placeholder="请输入材料出库名称" />
         </el-form-item>
-    
+
         <el-form-item label="材料入库名称" prop="inId">
-          <el-select
-            v-model="form.inId"
-            placeholder="请选择材料入库名称"
-            @change="handleShowPro(form.inId)"
-          >
+          <el-select v-model="form.inId" placeholder="请选择材料入库名称" @change="handleShowPro(form.inId)">
             <el-option
               v-for="dict in receivedList"
               :key="dict.id"
@@ -180,7 +182,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="项目名称" prop="proId">
-           <el-select v-model="form.proId" placeholder="请选择合适项目">
+          <el-select v-model="form.proId" placeholder="请选择合适项目">
             <el-option
               v-for="dict in projectList"
               :key="dict.id"
@@ -204,28 +206,43 @@
             <el-radio
               v-for="dict in dict.type.mms_pur_status"
               :key="dict.value"
-:label="dict.value"
+              :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-     
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-divider content-position="center">材料与材料出库关联信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddMmsDeliveryMaterial">添加</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAddMmsDeliveryMaterial"
+            >添加</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteMmsDeliveryMaterial">删除</el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteMmsDeliveryMaterial"
+            >删除</el-button>
           </el-col>
         </el-row>
-        <el-table :data="mmsDeliveryMaterialList" :row-class-name="rowMmsDeliveryMaterialIndex" @selection-change="handleMmsDeliveryMaterialSelectionChange" ref="mmsDeliveryMaterial">
+        <el-table
+          :data="mmsDeliveryMaterialList"
+          :row-class-name="rowMmsDeliveryMaterialIndex"
+          @selection-change="handleMmsDeliveryMaterialSelectionChange"
+          ref="mmsDeliveryMaterial"
+        >
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="序号" align="center" prop="index" width="50" />
           <el-table-column label="材料名称" prop="matId" width="150">
-           <template slot-scope="scope">
+            <template slot-scope="scope">
               <el-select v-model="scope.row.matId" placeholder="请选择合适的材料">
                 <el-option
                   v-for="dict in materialList"
@@ -252,16 +269,28 @@
 </template>
 
 <script>
-import { listDelivery, getDelivery, delDelivery, addDelivery, updateDelivery } from "@/api/inventory/delivery";
+import {
+  listDelivery,
+  getDelivery,
+  delDelivery,
+  addDelivery,
+  updateDelivery
+} from "@/api/inventory/delivery";
 import { listReceived, getReceived } from "@/api/inventory/received";
 import { listProject, getProject } from "@/api/project/project";
 import { listMaterial } from "@/api/material/material";
 import { listUser } from "@/api/system/user";
 import { listSupplier } from "@/api/supplier/supplier";
-import { listStore, getStoreByProId, updateStore, updateStoreReceived } from "@/api/storage/store";
+import {
+  listStore,
+  getStore,
+  getStoreByProId,
+  updateStore,
+  updateStoreReceived
+} from "@/api/storage/store";
 export default {
   name: "Delivery",
-  dicts: ['mms_pur_status'],
+  dicts: ["mms_pur_status"],
   data() {
     return {
       // 遮罩层
@@ -286,9 +315,11 @@ export default {
       materialList: [],
       userList: [],
       storeList: [],
+      mmsStoreMaterialList: [],
       supplierList: [],
       // 材料与材料出库关联表格数据
       mmsDeliveryMaterialList: [],
+      mmsTempStoreMaterialList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -302,7 +333,7 @@ export default {
         proId: null,
         storeId: null,
         status: null,
-        userId: null,
+        userId: null
       },
       // 表单参数
       form: {},
@@ -314,12 +345,10 @@ export default {
         inId: [
           { required: true, message: "材料入库ID不能为空", trigger: "blur" }
         ],
-        proId: [
-          { required: true, message: "项目ID不能为空", trigger: "blur" }
-        ],
+        proId: [{ required: true, message: "项目ID不能为空", trigger: "blur" }],
         storeId: [
           { required: true, message: "仓库ID不能为空", trigger: "blur" }
-        ],
+        ]
         // userId: [
         //   { required: true, message: "审核人ID不能为空", trigger: "blur" }
         // ],
@@ -336,7 +365,7 @@ export default {
       listDelivery(this.queryParams).then(response => {
         this.deliveryList = response.rows;
         console.log(response.rows);
-        
+
         this.total = response.total;
         this.loading = false;
       });
@@ -394,13 +423,15 @@ export default {
       this.handleQuery();
     },
 
-  handleShowPro(scope) {
+    handleShowPro(scope) {
       var pid = "";
 
       getReceived(scope)
         .then(res => {
           var list = res.data.mmsReceivedMaterialList;
-          var obj = JSON.parse(JSON.stringify(list).replace(/inNum/g,"outNum"));
+          var obj = JSON.parse(
+            JSON.stringify(list).replace(/inNum/g, "outNum")
+          );
           this.mmsDeliveryMaterialList = obj;
           this.form.proId = res.data.proId;
           this.form.storeId = res.data.storeId;
@@ -409,6 +440,7 @@ export default {
           console.log(res.data.proId);
           getStoreByProId(res.data.proId).then(res => {
             this.storeList = res.data;
+            console.log("store");
             console.log(res.data);
           });
           console.log(res.data.mmsReceivedMaterialList);
@@ -422,9 +454,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.outId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.outId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -435,7 +467,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const outId = row.outId || this.ids
+      const outId = row.outId || this.ids;
       getDelivery(outId).then(response => {
         this.form = response.data;
         this.mmsDeliveryMaterialList = response.data.mmsDeliveryMaterialList;
@@ -443,8 +475,25 @@ export default {
         this.title = "修改材料出库";
       });
     },
+    //清除放入store中的参数
+    cleanStoreForm() {
+      this.storeForm = {
+        storeId: null,
+        proId: null,
+        storeName: null,
+        userId: null,
+        storePhone: null,
+        storeAddress: null,
+        status: "0",
+        createBy: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null
+      };
+    },
     /** 提交按钮 */
     submitForm() {
+      this.cleanStoreForm();
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.mmsDeliveryMaterialList = this.mmsDeliveryMaterialList;
@@ -461,20 +510,77 @@ export default {
               this.getList();
             });
           }
+
+          //如果已审核通过，则将数据存入对应项目的仓库中
+          if (this.form.status == "2") {
+            this.storeForm = {
+              storeId: null,
+              proId: null,
+              storeName: null,
+              userId: null,
+              storePhone: null,
+              storeAddress: null,
+              status: "0",
+              createBy: null,
+              createTime: null,
+              updateBy: null,
+              updateTime: null
+            };
+            this.storeForm.storeId = this.form.storeId;
+            this.storeForm.proId = this.form.proId;
+            getStore(this.form.storeId).then(res => {
+            
+              this.mmsStoreMaterialList = res.data.mmsStoreMaterialList;
+              
+              this.storeForm = res.data;
+              var listre = res.data.mmsStoreMaterialList;
+              var listde = this.form.mmsDeliveryMaterialList;
+             
+            
+              var i = 0;
+              var j = 0;
+              var k = 0;
+              for (var o in listre) {
+                i = listre[o].matNum;
+                j = listde[o].outNum;
+                if (i - j >= 0) {
+                  k = i - j;
+                 
+                  listre[o].matNum = k;
+                  listre[o].matTprice = listre[o].matUprice*k;
+                }
+              }
+             
+              this.storeForm.mmsStoreMaterialList = listre;
+              this.storeForm.status = this.form.status;
+
+              updateStoreReceived(this.storeForm).then(res => {
+             
+                this.$modal.msgSuccess("已更新仓库内容");
+              });
+             
+            });
+
+          
+          }
         }
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const outIds = row.outId || this.ids;
-      this.$modal.confirm('是否确认删除材料出库编号为"' + outIds + '"的数据项？').then(function() {
-        return delDelivery(outIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除材料出库编号为"' + outIds + '"的数据项？')
+        .then(function() {
+          return delDelivery(outIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
-	/** 材料与材料出库关联序号 */
+    /** 材料与材料出库关联序号 */
     rowMmsDeliveryMaterialIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
@@ -493,20 +599,26 @@ export default {
       } else {
         const mmsDeliveryMaterialList = this.mmsDeliveryMaterialList;
         const checkedMmsDeliveryMaterial = this.checkedMmsDeliveryMaterial;
-        this.mmsDeliveryMaterialList = mmsDeliveryMaterialList.filter(function(item) {
-          return checkedMmsDeliveryMaterial.indexOf(item.index) == -1
+        this.mmsDeliveryMaterialList = mmsDeliveryMaterialList.filter(function(
+          item
+        ) {
+          return checkedMmsDeliveryMaterial.indexOf(item.index) == -1;
         });
       }
     },
     /** 复选框选中数据 */
     handleMmsDeliveryMaterialSelectionChange(selection) {
-      this.checkedMmsDeliveryMaterial = selection.map(item => item.index)
+      this.checkedMmsDeliveryMaterial = selection.map(item => item.index);
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('inventory/delivery/export', {
-        ...this.queryParams
-      }, `delivery_${new Date().getTime()}.xlsx`)
+      this.download(
+        "inventory/delivery/export",
+        {
+          ...this.queryParams
+        },
+        `delivery_${new Date().getTime()}.xlsx`
+      );
     }
   }
 };

@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="120px"
+    >
       <el-form-item label="材料退库名称" prop="backName">
         <el-input
           v-model="queryParams.backName"
@@ -11,7 +17,7 @@
         />
       </el-form-item>
       <el-form-item label="材料出库名称" prop="outId">
-      <el-select v-model="queryParams.outId" placeholder="请选择材料出库名称" clearable size="small">
+        <el-select v-model="queryParams.outId" placeholder="请选择材料出库名称" clearable size="small">
           <el-option
             v-for="dict in deliveryList"
             :key="dict.id"
@@ -40,7 +46,7 @@
           />
         </el-select>
       </el-form-item>
-      
+
       <el-form-item label="材料退库状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择材料退库状态" clearable size="small">
           <el-option
@@ -51,7 +57,7 @@
           />
         </el-select>
       </el-form-item>
-       <el-form-item label="审核人" prop="userId">
+      <el-form-item label="审核人" prop="userId">
         <el-select v-model="queryParams.userId" placeholder="请选择审核人" clearable size="small">
           <el-option
             v-for="dict in userList"
@@ -115,7 +121,7 @@
 
     <el-table v-loading="loading" :data="backList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-       <el-table-column label="序号" type="index" width="50" align="center">
+      <el-table-column label="序号" type="index" width="50" align="center">
         <template slot-scope="scope">
           <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
         </template>
@@ -126,7 +132,7 @@
       <el-table-column label="仓库名称" align="center" prop="store.storeName" />
       <el-table-column label="材料退库状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.mms_pur_status" :value="scope.row.status"/>
+          <dict-tag :options="dict.type.mms_pur_status" :value="scope.row.status" />
         </template>
       </el-table-column>
       <el-table-column label="审核人" align="center" prop="user.nickName" />
@@ -150,7 +156,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -166,7 +172,7 @@
           <el-input v-model="form.backName" placeholder="请输入材料退库名称" />
         </el-form-item>
         <el-form-item label="材料出库名称" prop="outId">
-         <el-select
+          <el-select
             v-model="form.outId"
             placeholder="请选择材料出库名称"
             @change="handleShowPro(form.outId)"
@@ -179,9 +185,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-     
+
         <el-form-item label="项目名称" prop="proId">
-           <el-select v-model="form.proId" placeholder="请选择合适项目">
+          <el-select v-model="form.proId" placeholder="请选择合适项目">
             <el-option
               v-for="dict in projectList"
               :key="dict.id"
@@ -190,7 +196,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-           <el-form-item label="仓库名称" prop="storeId">
+        <el-form-item label="仓库名称" prop="storeId">
           <el-select v-model="form.storeId" placeholder="请选择合适仓库">
             <el-option
               v-for="dict in storeList"
@@ -205,7 +211,7 @@
             <el-radio
               v-for="dict in dict.type.mms_pur_status"
               :key="dict.value"
-:label="dict.value"
+              :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -215,15 +221,30 @@
         <el-divider content-position="center">材料与材料退库关联信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddMmsBackMaterial">添加</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAddMmsBackMaterial"
+            >添加</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteMmsBackMaterial">删除</el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="handleDeleteMmsBackMaterial"
+            >删除</el-button>
           </el-col>
         </el-row>
-        <el-table :data="mmsBackMaterialList" :row-class-name="rowMmsBackMaterialIndex" @selection-change="handleMmsBackMaterialSelectionChange" ref="mmsBackMaterial">
+        <el-table
+          :data="mmsBackMaterialList"
+          :row-class-name="rowMmsBackMaterialIndex"
+          @selection-change="handleMmsBackMaterialSelectionChange"
+          ref="mmsBackMaterial"
+        >
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="序号" align="center" prop="index" width="50" />
           <el-table-column label="材料名称" prop="matId" width="150">
             <template slot-scope="scope">
               <el-select v-model="scope.row.matId" placeholder="请选择合适的材料">
@@ -252,15 +273,27 @@
 </template>
 
 <script>
-import { listBack, getBack, delBack, addBack, updateBack } from "@/api/inventory/back";
+import {
+  listBack,
+  getBack,
+  delBack,
+  addBack,
+  updateBack
+} from "@/api/inventory/back";
 import { listDelivery, getDelivery } from "@/api/inventory/delivery";
 import { listProject, getProject } from "@/api/project/project";
 import { listMaterial } from "@/api/material/material";
 import { listUser } from "@/api/system/user";
-import { listStore, getStoreByProId, updateStore, updateStoreReceived } from "@/api/storage/store";
+import {
+  listStore,
+  getStore,
+  getStoreByProId,
+  updateStore,
+  updateStoreReceived
+} from "@/api/storage/store";
 export default {
   name: "Back",
-  dicts: ['mms_pur_status'],
+  dicts: ["mms_pur_status"],
   data() {
     return {
       // 遮罩层
@@ -281,6 +314,9 @@ export default {
       backList: [],
       deliveryList: [],
       projectList: [],
+      mmsStoreMaterialList: [],
+      mmsDeliveryMaterialList: [],
+      mmsTempStoreMaterialList: [],
       mmsDeliveryMaterialList: [],
       materialList: [],
       userList: [],
@@ -300,7 +336,7 @@ export default {
         proId: null,
         storeId: null,
         status: null,
-        userId: null,
+        userId: null
       },
       // 表单参数
       form: {},
@@ -337,7 +373,7 @@ export default {
         this.projectList = res.rows;
       });
       listMaterial().then(res => {
-        this.materialList = res.rows;      
+        this.materialList = res.rows;
       });
       listUser().then(res => {
         this.userList = res.rows;
@@ -345,7 +381,6 @@ export default {
       listStore().then(res => {
         this.storeList = res.rows;
       });
-
     },
     // 取消按钮
     cancel() {
@@ -387,7 +422,9 @@ export default {
       getDelivery(scope)
         .then(res => {
           var list = res.data.mmsDeliveryMaterialList;
-          var obj = JSON.parse(JSON.stringify(list).replace(/outNum/g,"backNum"));
+          var obj = JSON.parse(
+            JSON.stringify(list).replace(/outNum/g, "backNum")
+          );
           this.mmsBackMaterialList = obj;
           this.form.proId = res.data.proId;
           this.form.storeId = res.data.storeId;
@@ -409,9 +446,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.backId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.backId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -422,7 +459,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const backId = row.backId || this.ids
+      const backId = row.backId || this.ids;
       getBack(backId).then(response => {
         this.form = response.data;
         this.mmsBackMaterialList = response.data.mmsBackMaterialList;
@@ -448,20 +485,69 @@ export default {
               this.getList();
             });
           }
+          //如果已审核通过，则将数据存入对应项目的仓库中
+          if (this.form.status == "2") {
+            this.storeForm = {
+              storeId: null,
+              proId: null,
+              storeName: null,
+              userId: null,
+              storePhone: null,
+              storeAddress: null,
+              status: "0",
+              createBy: null,
+              createTime: null,
+              updateBy: null,
+              updateTime: null
+            };
+            this.storeForm.storeId = this.form.storeId;
+            this.storeForm.proId = this.form.proId;
+            getStore(this.form.storeId).then(res => {
+              this.mmsStoreMaterialList = res.data.mmsStoreMaterialList;
+
+              this.storeForm = res.data;
+              var listre = res.data.mmsStoreMaterialList;
+              var listde = this.form.mmsBackMaterialList;
+
+              var i = 0;
+              var j = 0;
+              var k = 0;
+              for (var o in listre) {
+                i = listre[o].matNum;
+                j = listde[o].backNum;
+
+                k = i + j;
+
+                listre[o].matNum = k;
+                listre[o].matTprice = listre[o].matUprice * k;
+              }
+
+              this.storeForm.mmsStoreMaterialList = listre;
+              this.storeForm.status = this.form.status;
+
+              updateStoreReceived(this.storeForm).then(res => {
+                this.$modal.msgSuccess("已更新仓库内容");
+              });
+            });
+          }
         }
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const backIds = row.backId || this.ids;
-      this.$modal.confirm('是否确认删除材料退库编号为"' + backIds + '"的数据项？').then(function() {
-        return delBack(backIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除材料退库编号为"' + backIds + '"的数据项？')
+        .then(function() {
+          return delBack(backIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
-	/** 材料与材料退库关联序号 */
+    /** 材料与材料退库关联序号 */
     rowMmsBackMaterialIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
@@ -481,19 +567,23 @@ export default {
         const mmsBackMaterialList = this.mmsBackMaterialList;
         const checkedMmsBackMaterial = this.checkedMmsBackMaterial;
         this.mmsBackMaterialList = mmsBackMaterialList.filter(function(item) {
-          return checkedMmsBackMaterial.indexOf(item.index) == -1
+          return checkedMmsBackMaterial.indexOf(item.index) == -1;
         });
       }
     },
     /** 复选框选中数据 */
     handleMmsBackMaterialSelectionChange(selection) {
-      this.checkedMmsBackMaterial = selection.map(item => item.index)
+      this.checkedMmsBackMaterial = selection.map(item => item.index);
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('inventory/back/export', {
-        ...this.queryParams
-      }, `back_${new Date().getTime()}.xlsx`)
+      this.download(
+        "inventory/back/export",
+        {
+          ...this.queryParams
+        },
+        `back_${new Date().getTime()}.xlsx`
+      );
     }
   }
 };

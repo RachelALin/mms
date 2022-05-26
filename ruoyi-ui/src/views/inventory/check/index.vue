@@ -417,6 +417,52 @@ export default {
               this.getList();
             });
           }
+        //如果已审核通过，则将数据存入对应项目的仓库中
+          if (this.form.status == "2") {
+            this.storeForm = {
+              storeId: null,
+              proId: null,
+              storeName: null,
+              userId: null,
+              storePhone: null,
+              storeAddress: null,
+              status: "0",
+              createBy: null,
+              createTime: null,
+              updateBy: null,
+              updateTime: null
+            };
+            this.storeForm.storeId = this.form.storeId;
+            this.storeForm.proId = this.form.proId;
+              getStore(this.form.storeId).then(res => {
+              this.mmsStoreMaterialList = res.data.mmsStoreMaterialList;
+
+              this.storeForm = res.data;
+              var listre = res.data.mmsStoreMaterialList;
+              var listde = this.form.mmsCheckMaterialList;
+
+              var i = 0;
+              var j = 0;
+              var k = 0;
+              for (var o in listre) {
+                i = listre[o].matNum;
+                j = listde[o].cheNum;
+
+                i = j;
+                k = i;
+
+                listre[o].matNum = k;
+                listre[o].matTprice = listre[o].matUprice * k;
+              }
+
+              this.storeForm.mmsStoreMaterialList = listre;
+              this.storeForm.status = this.form.status;
+
+              updateStoreReceived(this.storeForm).then(res => {
+                this.$modal.msgSuccess("已更新仓库内容");
+              });
+            });
+          }
         }
       });
     },

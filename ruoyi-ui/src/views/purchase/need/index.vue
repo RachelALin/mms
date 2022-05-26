@@ -430,8 +430,10 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const needId = row.needId || this.ids;
+      const needId = row.needId;
+      
       getNeed(needId).then(response => {
+        console.log(response.data)
         this.form = response.data;
         this.mmsNeedMaterialList = response.data.mmsNeedMaterialList;
         this.open = true;
@@ -441,27 +443,30 @@ export default {
     //根据原计划ID获取项目ID
     handleShowPro(scope){
       getPlan(scope).then(res => {
-            console.log(scope);
-            console.log(res.data);
             this.form.proId = res.data.proId;
             this.mmsNeedMaterialList = res.data.mmsPlanMaterialList;
-            console.log(this.form)
+         
       });
   
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
+
         if (valid) {
+
           this.form.mmsNeedMaterialList = this.mmsNeedMaterialList;
+       
           if (this.form.needId != null) {
             updateNeed(this.form).then(response => {
+           
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addNeed(this.form).then(response => {
+              
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

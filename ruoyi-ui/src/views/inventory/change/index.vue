@@ -196,39 +196,7 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <!-- <el-divider content-position="center">材料与材料调拨关联信息</el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddMmsChangeMaterial">添加</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteMmsChangeMaterial">删除</el-button>
-          </el-col>
-        </el-row>-->
-        <!-- <el-table :data="mmsChangeMaterialList" :row-class-name="rowMmsChangeMaterialIndex" @selection-change="handleMmsChangeMaterialSelectionChange" ref="mmsChangeMaterial">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="材料ID" prop="matId" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.matId" placeholder="请输入材料ID" />
-            </template>
-          </el-table-column>
-          <el-table-column label="材料单价" prop="matUprice" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.matUprice" placeholder="请输入材料单价" />
-            </template>
-          </el-table-column>
-          <el-table-column label="材料数量" prop="matNum" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.matNum" placeholder="请输入材料数量" />
-            </template>
-          </el-table-column>
-          <el-table-column label="材料总价" prop="matTprice" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.matTprice" placeholder="请输入材料总价" />
-            </template>
-          </el-table-column>
-        </el-table>-->
+      
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -385,8 +353,7 @@ export default {
     handleShowPro(scope) {
       getStore(scope)
         .then(res => {
-          // var list = res.data.mmsStoreMaterialList;
-          // var obj = JSON.parse(JSON.stringify(list).replace(/backNum/g,"matNum"));
+         
           this.mmsChangeMaterialList = res.data.mmsStoreMaterialList;
           this.form.proId = res.data.proId;
           this.form.storeId = res.data.storeId;
@@ -435,46 +402,56 @@ export default {
             });
           }
         }
-        // //如果已审核通过，则将数据存入对应项目的仓库中
-        // if (this.form.status == "2") {
-        //   this.storeForm = {
-        //     storeId: null,
-        //     proId: null,
-        //     storeName: null,
-        //     userId: null,
-        //     storePhone: null,
-        //     storeAddress: null,
-        //     status: "0",
-        //     createBy: null,
-        //     createTime: null,
-        //     updateBy: null,
-        //     updateTime: null
-        //   };
-        //   this.storeForm.storeId = this.form.storeId;
-        //   this.storeForm.proId = this.form.proId;
-        //   var list = this.form.mmsChangeMaterialList;
+        if (this.form.status == "2") {
+            this.storeForm = {
+              storeId: null,
+              proId: null,
+              storeName: null,
+              userId: null,
+              storePhone: null,
+              storeAddress: null,
+              status: "0",
+              createBy: null,
+              createTime: null,
+              updateBy: null,
+              updateTime: null
+            };
+            this.storeForm.storeId = this.form.storeId;
+            this.storeForm.proId = this.form.proId;
+              getStore(this.form.storeId).then(res => {
+              this.mmsStoreMaterialList = res.data.mmsStoreMaterialList;
+              console.log(res.data)
+              this.storeForm = res.data; 
+              this.storeForm.storeAddress = this.form.remark;
+              this.storeForm.storeName = this.form.chaName;
+              console.log(this.storeForm)
+              // this.storeForm = res.data;
+              // var listre = res.data.mmsStoreMaterialList;
+              // var listde = this.form.mmsCheckMaterialList;
 
-        //   var obj = JSON.parse(
-        //     JSON.stringify(list).replace(/conUprice/g, "matUprice")
-        //   );
-        //   list = JSON.parse(
-        //     JSON.stringify(obj).replace(/conTprice/g, "matTprice")
-        //   );
-        //   obj = JSON.parse(JSON.stringify(list).replace(/inNum/g, "matNum"));
-        //   this.storeForm.mmsStoreMaterialList = obj;
-        //   this.storeForm.status = this.form.status;
+              // var i = 0;
+              // var j = 0;
+              // var k = 0;
+              // for (var o in listre) {
+              //   i = listre[o].matNum;
+              //   j = listde[o].cheNum;
 
-        //   console.log(this.storeForm);
-        //   updateStore(this.storeForm)
-        //     .then(res => {
-        //       console.log(this.storeForm);
-        //       this.$modal.msgSuccess("已更新仓库");
-        //     })
-        //     .catch(err => {
-        //       this.$message.error(err.message);
-        //       console.log(err);
-        //     });
-        // }
+              //   i = j;
+              //   k = i;
+
+              //   listre[o].matNum = k;
+              //   listre[o].matTprice = listre[o].matUprice * k;
+              // }
+
+              // this.storeForm.mmsStoreMaterialList = listre;
+              // this.storeForm.status = this.form.status;
+
+              updateStoreReceived(this.storeForm).then(res => {
+                this.$modal.msgSuccess("已更新仓库内容");
+              });
+            });
+          }
+        
       });
     },
     /** 删除按钮操作 */

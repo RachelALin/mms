@@ -511,8 +511,7 @@ export default {
             var list = res.data.mmsNeedMaterialList;
             var obj = JSON.parse(JSON.stringify(list).replace(/matUprice/g,"conUprice"));
             this.mmsContractMaterialList = obj;
-
-            console.log(res.data.mmsNeedMaterialList)
+        
       });
   
     },
