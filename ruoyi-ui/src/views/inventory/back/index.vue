@@ -513,8 +513,8 @@ export default {
               var j = 0;
               var k = 0;
               for (var o in listre) {
-                i = listre[o].matNum;
-                j = listde[o].backNum;
+                i = parseInt(listre[o].matNum);
+                j = parseInt(listde[o].backNum);
 
                 k = i + j;
 
